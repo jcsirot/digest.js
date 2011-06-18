@@ -20,30 +20,33 @@ Usage
 API usage:
 
 1. Initialize a digest object
-```javascript
-var dg = new Digest.SHA1();
-```
+
+    ```
+    var dg = new Digest.SHA1();
+    ```
 
 2. Update some data
-```javascript
-var data = new ArrayBuffer(3);
-var buf = new Uint8Array(data);
-buf[0] = 0x61; /* a */
-buf[1] = 0x62; /* b */
-buf[2] = 0x63; /* c */
-dg.update(data);
-```
+
+    ```
+    var data = new ArrayBuffer(3);
+    var buf = new Uint8Array(data);
+    buf[0] = 0x61; /* a */
+    buf[1] = 0x62; /* b */
+    buf[2] = 0x63; /* c */
+    dg.update(data);
+    ```
 
 3. Finalize
-```javascript
-var result = dg.finalize();
-```
+
+    ```
+    var result = dg.finalize();
+    ```
 
 The `update` method also accepts US-ASCII string and byte (in the range 0-255) types.
 
 It is also possible to digest some data at once:
 
-```javascript
+```
 var dg = new Digest.SHA1();
 var result = dg.digest("abc");
 ```
