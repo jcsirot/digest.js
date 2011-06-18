@@ -3,27 +3,27 @@ digest.js
 
 Overview
 --------
-
-digest.js is a javascript library implementing cryptographic digest algorithms and (in a near future) HMAC algorithms. digest.js is released under the terms of the [GNU GENERAL PUBLIC LICENSE Version 3](http://www.gnu.org/licenses/gpl.html)
+**digest.js** is a javascript library implementing cryptographic digest algorithms and (in a near future) HMAC algorithms.
 
 digest.js is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with Chrome 11 and Firefox 4 (Since Firefox 4 does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
+
 
 Usage
 -----
 
 digest.js supports:
-- MD5
-- SHA-1
-- SHA-256 (soon)
+
++ MD5
++ SHA-1
++ SHA-256 (soon)
+
 
 1. Initialize a digest object
-
 ```javascript
 var dg = new Digest.SHA1();
 ```
 
 2. Update some data
-
 ```javascript
 var data = new ArrayBuffer(3);
 var buf = new Uint8Array(data);
@@ -34,7 +34,6 @@ dg.update(data);
 ```
 
 3. Finalize
-
 ```javascript
 var result = dg.finalize();
 ```
@@ -47,3 +46,7 @@ It is also possible to digest some data at once:
 var dg = new Digest.SHA1();
 var result = dg.digest("abc");
 ```
+
+License
+-------
+**digest.js** is released under the terms of the [GNU GENERAL PUBLIC LICENSE Version 3](http://www.gnu.org/licenses/gpl.html)
