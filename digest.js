@@ -181,7 +181,7 @@ md5Engine.prototype.getDigest = function () {
     rv[13] = (this.current[3] >>> 8) & 0xFF;
     rv[14] = (this.current[3] >>> 16) & 0xFF;
     rv[15] = (this.current[3] >>> 24) & 0xFF;
-    return rv;
+    return rv.buffer;
 };
 
 md5Engine.prototype.reset = function () {
@@ -501,7 +501,7 @@ sha1Engine.prototype.getDigest = function () {
     rv[18] = (this.current[4] >>> 8) & 0xFF;
     rv[17] = (this.current[4] >>> 16) & 0xFF;
     rv[16] = (this.current[4] >>> 24) & 0xFF;
-    return rv;
+    return rv.buffer;
 };
 
 sha1Engine.prototype.reset = function () {

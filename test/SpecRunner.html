@@ -6,8 +6,8 @@
   <link rel="stylesheet" type="text/css" href="lib/jasmine-1.0.2/jasmine.css">
 
   <script>
-      function bin2hex(buffer) {
-          var i, f = 0, a = [];
+      function bin2hex(data) {
+          var i, f = 0, a = [], buffer = new Uint8Array(data);
           f = buffer.length;
           for (i = 0; i < f; i++) {
               a[i] = buffer[i].toString(16).replace(/^([\da-f])$/, "0$1");
