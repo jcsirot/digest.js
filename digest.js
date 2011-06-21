@@ -518,6 +518,23 @@ sha1Engine.prototype.blockLen = 64;
 sha1Engine.prototype.digestLen = 20;
 
 var Digest = (function () {
+    var fromASCII = function (s) {
+        var buffer = new ArrayBuffer(s.length);
+        var b = new Uint8Array(buffer);
+        var i;
+        for (i = 0; i < s.length; i++) {
+            b[i] = s.charCodeAt(i);
+        }
+        return b;
+    };
+
+    var fromInteger = function (v) {
+        var buffer = new ArrayBuffer(1);
+        var b = new Uint8Array(buffer);
+        b[0] = v;
+        return b;
+    };
+
     var dg = function (constructor) {
         var update = function (input) {
             var len = input.length;
@@ -560,23 +577,6 @@ var Digest = (function () {
             return engine;
         }());
 
-        var fromASCII = function (s) {
-            var buffer = new ArrayBuffer(s.length);
-            var b = new Uint8Array(buffer);
-            var i;
-            for (i = 0; i < s.length; i++) {
-                b[i] = s.charCodeAt(i);
-            }
-            return b;
-        };
-
-        var fromInteger = function (v) {
-            var buffer = new ArrayBuffer(1);
-            var b = new Uint8Array(buffer);
-            b[0] = v;
-            return b;
-        };
-
         return {
             update: function (input) {
                 if (input.constructor === ArrayBuffer) {
@@ -609,6 +609,88 @@ var Digest = (function () {
         };
     };
 
+    var hmac = function (digest) {
+        var initialized = false;
+        var key, ipad, opad;
+        var init = function () {
+            var i, kbuf;
+            if (initialized) {
+                return;
+            }
+            if (key === undefined) {
+                throw "MAC key is not defined";
+            }
+            kbuf = new Uint8Array(key);
+            ipad = new Uint8Array(new ArrayBuffer(64));
+            for (i = 0; i < kbuf.length; i++) {
+                ipad[i] = 0x36 ^ kbuf[i];
+            }
+            for (i = kbuf.length; i < 64; i++) {
+                ipad[i] = 0x36;
+            }
+            opad = new Uint8Array(new ArrayBuffer(64));
+            for (i = 0; i < kbuf.length; i++) {
+                opad[i] = 0x5c ^ kbuf[i];
+            }
+            for (i = kbuf.length; i < 64; i++) {
+                opad[i] = 0x5c;
+            }
+            initialized = true;
+            digest.update(ipad.buffer);
+        };
+
+        var resetMac = function () {
+            key = undefined;
+            ipad = undefined;
+            opad = undefined;
+            digest.reset();
+        };
+
+        var finalizeMac = function () {
+            var result = digest.finalize();
+            digest.reset();
+            digest.update(opad.buffer);
+            digest.update(result);
+            result = digest.finalize();
+            resetMac();
+            return result;
+        };
+
+        var setKeyMac = function (k) {
+            if (k.constructor === ArrayBuffer) {
+                 key = k;
+            } else if (k.constructor === String) {
+                key = fromASCII(k);
+            } else {
+                throw "Unsupported key type";
+            }
+        };
+
+        return {
+            setKey: function (key) {
+                setKeyMac(key); // FIXME large keys
+            },
+
+            update: function (input) {
+                init();
+                digest.update(input);
+            },
+
+            finalize: function () {
+                return finalizeMac();
+            },
+
+            mac: function (input) {
+                this.update(input);
+                return this.finalize();
+            },
+
+            reset: function () {
+                resetMac();
+            }
+        };
+    };
+
     return {
         SHA1: function () {
             return dg(sha1Engine);
@@ -616,6 +698,10 @@ var Digest = (function () {
 
         MD5: function () {
             return dg(md5Engine);
+        },
+
+        HMAC_SHA1: function () {
+            return hmac(dg(sha1Engine));
         }
     };
 }());
