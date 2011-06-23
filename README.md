@@ -53,6 +53,7 @@ After the `finalize` or `digest` methods have been called, the digest object is 
 
 
 The `update` and `digest` methods accept these data types:
+
 + `ArrayBuffer`
 + `String` (US-ASCII encoding)
 + `byte` (i.e. a number in the range 0-255)
