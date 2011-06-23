@@ -620,7 +620,11 @@ var Digest = (function () {
             if (key === undefined) {
                 throw "MAC key is not defined";
             }
-            kbuf = new Uint8Array(key);
+            if (key.byteLength > 64) {
+                kbuf = new Uint8Array(digest.digest(key));
+            } else {
+                kbuf = new Uint8Array(key);
+            }
             ipad = new Uint8Array(new ArrayBuffer(64));
             for (i = 0; i < kbuf.length; i++) {
                 ipad[i] = 0x36 ^ kbuf[i];
