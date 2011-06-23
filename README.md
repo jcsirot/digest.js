@@ -42,14 +42,20 @@ API usage:
     var result = dg.finalize();
     ```
 
-The `update` method also accepts US-ASCII string and byte (in the range 0-255) types.
-
 It is also possible to digest some data at once:
 
 ```
 var dg = new Digest.SHA1();
 var result = dg.digest("abc");
 ```
+
+After the `finalize` or `digest` methods have been called, the digest object is automatically reset and can be reused.
+
+
+The `update` and `digest` methods accept these data types:
++ `ArrayBuffer`
++ `String` (US-ASCII encoding)
++ `byte` (i.e. a number in the range 0-255)
 
 License
 -------
