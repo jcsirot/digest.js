@@ -19,6 +19,8 @@
  *
  * ***** END LICENSE BLOCK *****  */
 
+/*jslint bitwise: true, browser: true, sloppy: true, vars: true, plusplus: true, maxerr: 50, indent: 4 */
+
 var utils = {
     add: function (x, y) {
         return (x + y) & 0xFFFFFFFF;
@@ -620,7 +622,7 @@ var Digest = (function () {
             if (key === undefined) {
                 throw "MAC key is not defined";
             }
-            if (key.byteLength > 64) {
+            if (key.byteLength > 64) { /* B = 64 */
                 kbuf = new Uint8Array(digest.digest(key));
             } else {
                 kbuf = new Uint8Array(key);
@@ -662,7 +664,7 @@ var Digest = (function () {
 
         var setKeyMac = function (k) {
             if (k.constructor === ArrayBuffer) {
-                 key = k;
+                key = k;
             } else if (k.constructor === String) {
                 key = fromASCII(k);
             } else {
@@ -672,7 +674,7 @@ var Digest = (function () {
 
         return {
             setKey: function (key) {
-                setKeyMac(key); // FIXME large keys
+                setKeyMac(key);
             },
 
             update: function (input) {
