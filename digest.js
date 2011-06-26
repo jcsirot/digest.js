@@ -706,6 +706,10 @@ var Digest = (function () {
 
         HMAC_SHA1: function () {
             return hmac(dg(sha1Engine));
+        },
+
+        HMAC_MD5: function () {
+            return hmac(dg(md5Engine));
         }
     };
 }());

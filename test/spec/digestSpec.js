@@ -1,4 +1,3 @@
-/* Test cases from FIPS 180-2 - http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf */
 describe("Digest", function() {
     var dg;
 
@@ -44,6 +43,7 @@ describe("Digest", function() {
     });
 });
 
+/* Test cases from FIPS 180-2 - http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf */
 describe("SHA-1", function() {
     var dg;
 
