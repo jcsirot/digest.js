@@ -7,17 +7,21 @@ Overview
 
 **digest.js** is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with Chrome 11 and Firefox 4 (Since Firefox 4 does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
 
+### Supported algorithms:
 
-Usage
------
++ digest
+  + MD5
+  + SHA-1
++ Message Authentication Code (MAC)
+  + HMAC/MD5
+  + HMAC/SHA-1
 
-**digest.js** supports these algorithms:
+SHA-256 support is planned.
 
-+ MD5
-+ SHA-1
-+ SHA-256 (soon)
+API Usage
+---------
 
-API usage:
+### Digest
 
 1. Initialize a digest object
 
@@ -49,14 +53,51 @@ var dg = new Digest.SHA1();
 var result = dg.digest("abc");
 ```
 
-After the `finalize` or `digest` methods have been called, the digest object is automatically reset and can be reused.
+### MAC
 
+1. Initialize a MAC object
 
-The `update` and `digest` methods accept these data types:
+    ```
+    var mac = new Digest.HMAC_SHA1();
+    ```
+
+2. Set the key
+
+    ```
+    mac.setKey("KeyInPlainText");
+    ```
+
+3. Update some data
+
+    ```
+    var data = new ArrayBuffer(50);
+    var buf = new Uint8Array(data);
+    for (var i = 0; i < 50; i++) {
+        buf[i] = 0xdd;
+    }
+    mac.update(data);
+    ```
+
+4. Finalize
+
+    ```
+    var result = dg.finalize();
+    ```
+
+### Misc
+
+After the `finalize`, `digest` or `mac` methods have been called, the digest or mac object is automatically reset and can be reused.
+
+The `update`, `digest` and `mac` methods accept these data types:
 
 + `ArrayBuffer`
 + `String` (US-ASCII encoding)
 + `byte` (i.e. a number in the range 0-255)
+
+The MAC `setKey`method accepts these data types:
+
++ `ArrayBuffer`
++ `String` (US-ASCII encoding)
 
 License
 -------
