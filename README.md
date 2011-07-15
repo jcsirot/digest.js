@@ -12,11 +12,11 @@ Overview
 + digest
   + MD5
   + SHA-1
+  + SHA-256
 + Message Authentication Code (MAC)
   + HMAC/MD5
   + HMAC/SHA-1
-
-SHA-256 support is planned.
+  + HMAC/SHA-256
 
 API Usage
 ---------
