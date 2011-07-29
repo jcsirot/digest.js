@@ -3,9 +3,13 @@ digest.js
 
 Overview
 --------
-**digest.js** is a javascript library implementing cryptographic digest algorithms and (in a near future) HMAC algorithms.
+**digest.js** is a javascript library implementing cryptographic digest and HMAC algorithms.
 
-**digest.js** is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with Chrome 11 and Firefox 4 (Since Firefox 4 does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
+**digest.js** is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with these web browsers:
+
++ Chrome 11
++ Firefox 4 (WARNING: since Firefox does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
++ Safari 5.1
 
 ### Supported algorithms:
 
@@ -81,7 +85,7 @@ var result = dg.digest("abc");
 4. Finalize
 
     ```
-    var result = dg.finalize();
+    var result = mac.finalize();
     ```
 
 ### Misc
