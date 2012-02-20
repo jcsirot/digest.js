@@ -6,6 +6,10 @@ describe("SHA-256", function() {
         dg = new Digest.SHA256();
     });
 
+    it("should have a length of 32 bytes", function() {
+        expect(dg.digestLength()).toEqual(32);
+    });
+
     it("sha256('abc') = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", function() {
         var result = dg.digest("abc");
         expect(bin2hex(result)).toEqual("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");

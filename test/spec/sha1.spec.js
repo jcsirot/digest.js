@@ -6,6 +6,10 @@ describe("SHA-1", function() {
         dg = new Digest.SHA1();
     });
 
+    it("should have a length of 20 bytes", function() {
+        expect(dg.digestLength()).toEqual(20);
+    });
+
     it("sha1('abc') = a9993e364706816aba3e25717850c26c9cd0d89d", function() {
         var result = dg.digest("abc");
         expect(bin2hex(result)).toEqual("a9993e364706816aba3e25717850c26c9cd0d89d");

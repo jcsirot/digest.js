@@ -6,6 +6,10 @@ describe("MD5", function() {
         dg = new Digest.MD5();
     });
 
+    it("should have a length of 16 bytes", function() {
+        expect(dg.digestLength()).toEqual(16);
+    });
+
     it("md5('') = d41d8cd98f00b204e9800998ecf8427e", function() {
         var result = dg.digest("");
         expect(bin2hex(result)).toEqual("d41d8cd98f00b204e9800998ecf8427e");

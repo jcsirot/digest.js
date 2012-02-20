@@ -1,6 +1,6 @@
 /* ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright 2011 Jean-Christophe Sirot <sirot@chelonix.com>
+ * Copyright 2011-2012 Jean-Christophe Sirot <sirot@chelonix.com>
  *
  * This file is part of digest.js
  *
@@ -911,6 +911,23 @@ var Digest = (function () {
         return b;
     };
 
+    var convertToUint8Array = function (input) {
+        if (input.constructor === Uint8Array) {
+            return input;
+        } else if (input.constructor === ArrayBuffer) {
+            return new Uint8Array(input);
+        } else if (input.constructor === String) {
+            return fromASCII(input);
+        } else if (input.constructor === Number) {
+            if (input > 0xFF) {
+                throw "For more than one byte, use an array buffer";
+            }
+            return fromInteger(input);
+        } else {
+            throw "Unsupported type";
+        }
+    }
+
     /* Digest implementation */
     var dg = function (Constructor) {
         var update = function (input) {
@@ -956,19 +973,7 @@ var Digest = (function () {
 
         return {
             update: function (input) {
-                if (input.constructor === ArrayBuffer) {
-                    input = new Uint8Array(input);
-                } else if (input.constructor === String) {
-                    input = fromASCII(input);
-                } else if (input.constructor === Number) {
-                    if (input > 0xFF) {
-                        throw "To update more than one byte, use an array buffer";
-                    }
-                    input = fromInteger(input);
-                } else {
-                    throw "Unsupported input type";
-                }
-                engine.update(input);
+                engine.update(convertToUint8Array(input));
             },
 
             finalize: function () {
@@ -982,6 +987,10 @@ var Digest = (function () {
 
             reset: function () {
                 engine.reset();
+            },
+
+            digestLength: function() {
+                return engine.digestLen;
             }
         };
     };
@@ -1039,18 +1048,12 @@ var Digest = (function () {
         };
 
         var setKeyMac = function (k) {
-            if (k.constructor === ArrayBuffer) {
-                key = k;
-            } else if (k.constructor === String) {
-                key = fromASCII(k);
-            } else {
-                throw "Unsupported key type";
-            }
+            key = k;
         };
 
         return {
             setKey: function (key) {
-                setKeyMac(key);
+                setKeyMac(convertToUint8Array(key));
             },
 
             update: function (input) {
@@ -1072,6 +1075,32 @@ var Digest = (function () {
             }
         };
     };
+
+    /* PBKDF1 Implementation */
+    var pbkdf1 = function(digest, salt, iterationCount) {
+
+        var derive = function (password, len) {
+            var key;
+            var tmpBuf;
+            if (len > digest.digestLength()) {
+                throw "Key length larger than digest length";
+            }
+            digest.reset();
+            digest.update(password);
+            digest.update(salt);
+            tmpBuf = digest.finalize();
+            for (var i = 1; i < iterationCount; i++) {
+                tmpBuf = digest.digest(tmpBuf);
+            }
+            return tmpBuf.slice(0, len);
+        }
+
+        return {
+            deriveKey: function(password, len) {
+                return derive(convertToUint8Array(password), len);
+            }
+        };
+    }
 
     return {
         SHA1: function () {
@@ -1096,6 +1125,14 @@ var Digest = (function () {
 
         HMAC_SHA256: function () {
             return hmac(dg(sha256Engine));
+        },
+
+        PBKDF1_SHA1: function(salt, iterationCount) {
+            return pbkdf1(dg(sha1Engine), salt, iterationCount);
+        },
+
+        PBKDF1_MD5: function(salt, iterationCount) {
+            return pbkdf1(dg(md5Engine), salt, iterationCount);
         }
     };
 }());
