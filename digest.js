@@ -19,7 +19,29 @@
  *
  * ***** END LICENSE BLOCK *****  */
 
-/*jslint bitwise: true, browser: true, plusplus: true, maxerr: 50, indent: 4 */
+/*global ArrayBuffer: true, Uint8Array: true, Uint32Array:true, DataView: true */
+/*jslint browser: true, bitwise: true, plusplus: true, vars: true, indent: 4, maxerr: 50 */
+
+
+(function () {
+    "use strict";
+    if (!ArrayBuffer.prototype.slice) {
+        ArrayBuffer.prototype.slice = function (start, end) {
+            var i;
+            var that = new Uint8Array(this);
+            if (end === undefined) {
+                end = that.length;
+            }
+            var result = new ArrayBuffer(end - start);
+            var resultArray = new Uint8Array(result);
+            for (i = 0; i < resultArray.length; i++) {
+                resultArray[i] = that[i + start];
+            }
+            return result;
+        };
+    }
+}());
+
 
 var Digest = (function () {
     "use strict";
@@ -929,7 +951,16 @@ var Digest = (function () {
         } else {
             throw "Unsupported type";
         }
-    }
+    };
+
+    var convertToUInt32 = function (i) {
+        var tmp = new Uint8Array(new ArrayBuffer(4));
+        tmp[0] = (i & 0xFF000000) >> 24;
+        tmp[1] = (i & 0x00FF0000) >> 16;
+        tmp[2] = (i & 0x0000FF00) >> 8;
+        tmp[3] = (i & 0x000000FF);
+        return tmp;
+    };
 
     /* Digest implementation */
     var dg = function (Constructor) {
@@ -991,7 +1022,7 @@ var Digest = (function () {
                 engine.reset();
             },
 
-            digestLength: function() {
+            digestLength: function () {
                 return engine.digestLen;
             }
         };
@@ -1075,16 +1106,19 @@ var Digest = (function () {
 
             reset: function () {
                 resetMac();
+            },
+
+            hmacLength: function () {
+                return digest.digestLength();
             }
         };
     };
 
     /* PBKDF1 Implementation */
-    var pbkdf1 = function(digest, iterationCount) {
+    var pbkdf1 = function (digest, iterationCount) {
 
         var derive = function (password, salt, len) {
-            var key;
-            var tmpBuf;
+            var key, i, tmpBuf;
             if (len > digest.digestLength()) {
                 throw "Key length larger than digest length";
             }
@@ -1092,18 +1126,63 @@ var Digest = (function () {
             digest.update(password);
             digest.update(salt);
             tmpBuf = digest.finalize();
-            for (var i = 1; i < iterationCount; i++) {
+            for (i = 1; i < iterationCount; i++) {
                 tmpBuf = digest.digest(tmpBuf);
             }
             return tmpBuf.slice(0, len);
-        }
+        };
 
         return {
-            deriveKey: function(password, len) {
-                return derive(convertToUint8Array(password), len);
+            deriveKey: function (password, salt, len) {
+                return derive(convertToUint8Array(password), convertToUint8Array(salt), len);
             }
         };
-    }
+    };
+
+    var pbkdf2 = function (prf, iterationCount) {
+
+        var xor = function (l, r) {
+            var i;
+            for (i = 0; i < l.length; i++) {
+                l[i] = l[i] ^ r[i];
+            }
+            return l;
+        };
+
+        var F = function (password, salt, iterationCount, i) {
+            var k;
+            var Ti = new Uint8Array(new ArrayBuffer(prf.hmacLength()));
+            var U = new Uint8Array(new ArrayBuffer(salt.length + 4));
+            U.set(salt, 0);
+            U.set(convertToUInt32(i), salt.length);
+            for (k = 1; k <= iterationCount; k++) {
+                prf.setKey(password);
+                prf.update(U);
+                U = new Uint8Array(prf.finalize());
+                Ti = xor(Ti, U);
+            }
+            return Ti;
+        };
+
+        var derive = function (password, salt, len) {
+            var i, l, tmpBuf;
+            if (len > prf.hmacLength() * 0xFFFFFFFF) {
+                throw "Derived key length too long";
+            }
+            l = Math.ceil(len / prf.hmacLength());
+            tmpBuf = new Uint8Array(new ArrayBuffer(len * prf.hmacLength()));
+            for (i = 1; i <= l; i++) {
+                tmpBuf.set(F(password, salt, iterationCount, i), prf.hmacLength() * (i - 1));
+            }
+            return tmpBuf.buffer.slice(0, len);
+        };
+
+        return {
+            deriveKey: function (password, salt, len) {
+                return derive(convertToUint8Array(password), convertToUint8Array(salt), len);
+            }
+        };
+    };
 
     return {
         SHA1: function () {
@@ -1130,14 +1209,20 @@ var Digest = (function () {
             return hmac(dg(sha256Engine));
         },
 
-        PBKDF1_SHA1: function(iterationCount) {
+        PBKDF1_SHA1: function (iterationCount) {
             return pbkdf1(dg(sha1Engine), iterationCount);
         },
 
-        PBKDF1_MD5: function(iterationCount) {
+        PBKDF1_MD5: function (iterationCount) {
             return pbkdf1(dg(md5Engine), iterationCount);
         },
 
+        PBKDF2_HMAC_SHA1: function (iterationCount) {
+            return pbkdf2(hmac(dg(sha1Engine)), iterationCount);
+        },
+
+        PBKDF2_HMAC_SHA256: function (iterationCount) {
+            return pbkdf2(hmac(dg(sha256Engine)), iterationCount);
         }
     };
 }());
