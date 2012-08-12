@@ -196,6 +196,7 @@ var Digest = (function () {
 
     md5Engine.prototype.reset = function () {
         this.currentLen = 0;
+        this.inLen = 0;
         this.current = new Uint32Array(new ArrayBuffer(16));
         this.current[0] = 0x67452301;
         this.current[1] = 0xEFCDAB89;
@@ -518,6 +519,7 @@ var Digest = (function () {
 
     sha1Engine.prototype.reset = function () {
         this.currentLen = 0;
+        this.inLen = 0;
         this.current = new Uint32Array(new ArrayBuffer(20));
         this.current[0] = 0x67452301;
         this.current[1] = 0xEFCDAB89;
@@ -878,6 +880,7 @@ var Digest = (function () {
 
     sha256Engine.prototype.reset = function () {
         this.currentLen = 0;
+        this.inLen = 0;
         this.current = new Uint32Array(new ArrayBuffer(32));
         this.current[0] = 0x6A09E667;
         this.current[1] = 0xBB67AE85;
@@ -966,7 +969,6 @@ var Digest = (function () {
             Constructor.prototype.finalize = finalize;
             var engine = new Constructor();
             engine.inbuf = new Uint8Array(new ArrayBuffer(engine.blockLen));
-            engine.inLen = 0;
             engine.reset();
             return engine;
         }());
@@ -1031,6 +1033,7 @@ var Digest = (function () {
         };
 
         var resetMac = function () {
+            initialized = false;
             key = undefined;
             ipad = undefined;
             opad = undefined;
@@ -1054,10 +1057,10 @@ var Digest = (function () {
         return {
             setKey: function (key) {
                 setKeyMac(convertToUint8Array(key));
+                init();
             },
 
             update: function (input) {
-                init();
                 digest.update(input);
             },
 
