@@ -109,4 +109,25 @@ describe("HMAC-SHA1", function() {
         var result = mac.finalize();
         expect(bin2hex(result)).toEqual("e8e99d0f45237d786d6bbaa7965c7808bbff1a91");
     });
+
+    /* Test case #8 */
+    it("key = 'password', hmac/sha1('') = f1ccdb92a929f5149ed40c5d0f3f2fbbe7809521", function() {
+        mac.setKey("password");
+        var result = mac.finalize();
+        expect(bin2hex(result)).toEqual("f1ccdb92a929f5149ed40c5d0f3f2fbbe7809521");
+    });
+
+    /* Test case #9 */
+    it("should allow MAC reset", function() {
+        mac.setKey("password");
+        mac.update("abc");
+        //mac.finalize();
+        mac.reset();
+        mac.setKey("password");
+        mac.update("aaa");
+        var result = mac.finalize();
+        expect(bin2hex(result)).toEqual("88c8772f24b91807fa87b46315ef8bc073ec344c");
+
+    });
+
 });
