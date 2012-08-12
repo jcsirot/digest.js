@@ -1080,9 +1080,9 @@ var Digest = (function () {
     };
 
     /* PBKDF1 Implementation */
-    var pbkdf1 = function(digest, salt, iterationCount) {
+    var pbkdf1 = function(digest, iterationCount) {
 
-        var derive = function (password, len) {
+        var derive = function (password, salt, len) {
             var key;
             var tmpBuf;
             if (len > digest.digestLength()) {
@@ -1099,8 +1099,8 @@ var Digest = (function () {
         }
 
         return {
-            deriveKey: function(password, len) {
-                return derive(convertToUint8Array(password), len);
+            deriveKey: function(password, salt, len) {
+                return derive(convertToUint8Array(password), convertToUint8Array(salt), len);
             }
         };
     }
@@ -1130,12 +1130,12 @@ var Digest = (function () {
             return hmac(dg(sha256Engine));
         },
 
-        PBKDF1_SHA1: function(salt, iterationCount) {
-            return pbkdf1(dg(sha1Engine), salt, iterationCount);
+        PBKDF1_SHA1: function(iterationCount) {
+            return pbkdf1(dg(sha1Engine), iterationCount);
         },
 
-        PBKDF1_MD5: function(salt, iterationCount) {
-            return pbkdf1(dg(md5Engine), salt, iterationCount);
+        PBKDF1_MD5: function(iterationCount) {
+            return pbkdf1(dg(md5Engine), iterationCount);
         }
     };
 }());
