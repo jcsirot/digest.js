@@ -21,6 +21,12 @@ Overview
   + HMAC/MD5
   + HMAC/SHA-1
   + HMAC/SHA-256
++ Password-Based Key Derivation Function (PBKDF)
+  + PBKDF1/SHA1
+  + PBKDF1/MD5
+  + PBKDF2/HMAC/SHA1
+  + PBKDF2/HMAC/SHA-256
+
 
 API Usage
 ---------
@@ -29,13 +35,13 @@ API Usage
 
 1. Initialize a digest object
 
-    ```
+    ```javascript
     var dg = new Digest.SHA1();
     ```
 
 2. Update some data
 
-    ```
+    ```javascript
     var data = new ArrayBuffer(3);
     var buf = new Uint8Array(data);
     buf[0] = 0x61; /* a */
@@ -46,13 +52,13 @@ API Usage
 
 3. Finalize
 
-    ```
+    ```javascript
     var result = dg.finalize();
     ```
 
 It is also possible to digest some data at once:
 
-```
+```javascript
 var dg = new Digest.SHA1();
 var result = dg.digest("abc");
 ```
@@ -61,19 +67,19 @@ var result = dg.digest("abc");
 
 1. Initialize a MAC object
 
-    ```
+    ```javascript
     var mac = new Digest.HMAC_SHA1();
     ```
 
 2. Set the key
 
-    ```
+    ```javascript
     mac.setKey("KeyInPlainText");
     ```
 
 3. Update some data
 
-    ```
+    ```javascript
     var data = new ArrayBuffer(50);
     var buf = new Uint8Array(data);
     for (var i = 0; i < 50; i++) {
@@ -84,9 +90,24 @@ var result = dg.digest("abc");
 
 4. Finalize
 
-    ```
+    ```javascript
     var result = mac.finalize();
     ```
+
+### PBKDF
+
+1. Initialize a PBKDF object with the iteration count
+
+    ```javascript
+    var pbkdf = new Digest.PBKDF_HMAC_SHA1(2048);
+    ```
+
+2. Derive key with the password, salt and desired key length (in bytes)
+
+    ```javascript
+    var key = pbkdf.deriveKey("password", "salt", 24);
+    ```
+
 
 ### Misc
 
@@ -98,10 +119,16 @@ The `update`, `digest` and `mac` methods accept these data types:
 + `String` (US-ASCII encoding)
 + `byte` (i.e. a number in the range 0-255)
 
-The MAC `setKey`method accepts these data types:
+The MAC `setKey` method accepts these data types:
 
 + `ArrayBuffer`
 + `String` (US-ASCII encoding)
+
+The PBKDF `deriveKey` method accepts these data types for password and salt:
+
++ `ArrayBuffer`
++ `String` (US-ASCII encoding)
+
 
 License
 -------
