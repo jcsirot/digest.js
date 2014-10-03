@@ -1150,7 +1150,7 @@ var Digest = (function () {
             return l;
         };
 
-        var F = function (password, salt, iterationCount, i) {
+        var _F = function (password, salt, iterationCount, i) {
             var k;
             var Ti = new Uint8Array(new ArrayBuffer(prf.hmacLength()));
             var U = new Uint8Array(new ArrayBuffer(salt.length + 4));
@@ -1173,7 +1173,7 @@ var Digest = (function () {
             l = Math.ceil(len / prf.hmacLength());
             tmpBuf = new Uint8Array(new ArrayBuffer(len * prf.hmacLength()));
             for (i = 1; i <= l; i++) {
-                tmpBuf.set(F(password, salt, iterationCount, i), prf.hmacLength() * (i - 1));
+                tmpBuf.set(_F(password, salt, iterationCount, i), prf.hmacLength() * (i - 1));
             }
             return tmpBuf.buffer.slice(0, len);
         };

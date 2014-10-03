@@ -1,1 +1,9 @@
 *~
+build
+node_modules
+npm-debug.log
+.grunt
+.idea
+junit
+tmp
+.DS_Store

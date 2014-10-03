@@ -1,0 +1,39 @@
+{
+  "name": "digest-js",
+  "version": "0.2.0",
+  "description": "A simple javascript library implementing cryptographic digests, HMAC and PBKDF algorithms.",
+  "homepage": "http://www.coding-stories.com/digest-js/",
+  "author": {
+    "name": "Jean-Christophe Sirot",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jcsirot/digest.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jcsirot/digest.js/issues"
+  },
+  "licenses": [
+    {
+      "type": "GPL-3.0+",
+      "url": "http://www.gnu.org/licenses/gpl-3.0.txt"
+    }
+  ],
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jasmine": "^0.8.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "~0.5.0",
+    "jshint-stylish": "^1.0.0"
+  },
+  "keywords": [
+    "crypto", "cryptography",
+    "digest", "sha1", "md5", "sha256",
+    "hmac",
+    "pkkdf"
+  ]
+}

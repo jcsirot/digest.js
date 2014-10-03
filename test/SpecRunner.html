@@ -6,34 +6,15 @@
   <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.2/jasmine_favicon.png">
   <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.2/jasmine.css">
 
-  <script>
-      function bin2hex(buffer) {
-          var i, f = 0, a = [], data = new Uint8Array(buffer);
-          f = data.length;
-          for (i = 0; i < f; i++) {
-              a[i] = data[i].toString(16).replace(/^([\da-f])$/, "0$1");
-          }
-          return a.join('');
-      }
-      function hex2bin(str) {
-          var i, data, HEX = "0123456789abcdef";
-          data = new Uint8Array(new ArrayBuffer(str.length >> 1));
-          str = str.toLowerCase();
-          for (i = 0; i < str.length; i += 2) {
-            data[i>>1] = HEX.indexOf(str.charAt(i)) << 4 | HEX.indexOf(str.charAt(i+1));
-          }
-          return data.buffer;
-      }
-  </script>
-
   <script type="text/javascript" src="lib/jasmine-2.0.2/jasmine.js"></script>
   <script type="text/javascript" src="lib/jasmine-2.0.2/jasmine-html.js"></script>
   <script type="text/javascript" src="lib/jasmine-2.0.2/boot.js"></script>
 
+  <!-- helper functions -->
+  <script type="text/javascript" src="spec/helper.js"></script>
 
   <!-- include source files here... -->
-  <script type="text/javascript" src="../DataView.js"></script>
-  <script type="text/javascript" src="../digest.js"></script>
+  <script type="text/javascript" src="../build/digest.min.js"></script>
 
   <!-- include spec files here... -->
   <script type="text/javascript" src="spec/core.spec.js"></script>
