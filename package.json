@@ -4,7 +4,7 @@
   "description": "A simple javascript library implementing cryptographic digests, HMAC and PBKDF algorithms.",
   "homepage": "http://www.coding-stories.com/digest-js/",
   "author": {
-    "name": "Jean-Christophe Sirot",
+    "name": "Jean-Christophe Sirot"
   },
   "repository": {
     "type": "git",
@@ -31,8 +31,12 @@
     "jshint-stylish": "^1.0.0"
   },
   "keywords": [
-    "crypto", "cryptography",
-    "digest", "sha1", "md5", "sha256",
+    "crypto",
+    "cryptography",
+    "digest",
+    "sha1",
+    "md5",
+    "sha256",
     "hmac",
     "pkkdf"
   ]
