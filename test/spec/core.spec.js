@@ -28,17 +28,17 @@ describe("Core", function() {
         expect(bin2hex(result)).toEqual("a9993e364706816aba3e25717850c26c9cd0d89d");
     });
 
-    it("should not accept other input type", function() {
+    it("should not accept object input type", function() {
         var callback = function() {
             return dg.digest({});
         };
-        expect(callback).toThrow(jasmine.undefined);
+        expect(callback).toThrow();
+    });
 
-        dg.reset();
-
-        var callback2 = function() {
+    it("should not accept object integer type", function() {
+        var callback = function() {
             return dg.update(0x100);
         };
-        expect(callback2).toThrow(jasmine.undefined);
+        expect(callback).toThrow();
     });
 });
