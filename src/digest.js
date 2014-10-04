@@ -946,6 +946,8 @@ var Digest = (function () {
         } else if (input.constructor === Number) {
             if (input > 0xFF) {
                 throw "For more than one byte, use an array buffer";
+            } else if (input < 0) {
+                throw "Input value must be positive";
             }
             return fromInteger(input);
         } else {

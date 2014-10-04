@@ -35,9 +35,16 @@ describe("Core", function() {
         expect(callback).toThrow();
     });
 
-    it("should not accept object integer type", function() {
+    it("should not accept negative integer", function() {
         var callback = function() {
-            return dg.update(0x100);
+            return dg.update(-45);
+        };
+        expect(callback).toThrow();
+    });
+
+    it("should not accept integer > 255", function() {
+        var callback = function() {
+            return dg.update(432);
         };
         expect(callback).toThrow();
     });
