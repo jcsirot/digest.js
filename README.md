@@ -1,6 +1,8 @@
 digest.js
 =========
 
+![travis-ci.org build status](https://travis-ci.org/jcsirot/digest.js.svg?branch=dev-0.2)
+
 Overview
 --------
 **digest.js** is a javascript library implementing cryptographic digest and HMAC algorithms.
