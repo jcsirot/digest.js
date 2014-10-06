@@ -49,7 +49,7 @@ module.exports = function(grunt) {
           urls: [
             'http://127.0.0.1:9999/test/SpecRunner.html',
           ],
-          tunnelArgs: ['--debug'],
+          tunnelArgs: ['--verbose'],
           browsers: [{
             browserName: 'firefox',
             version: '19',
