@@ -9,6 +9,7 @@
   <script type="text/javascript" src="lib/jasmine-2.0.2/jasmine.js"></script>
   <script type="text/javascript" src="lib/jasmine-2.0.2/jasmine-html.js"></script>
   <script type="text/javascript" src="lib/jasmine-2.0.2/boot.js"></script>
+  <script type="text/javascript" src="lib/jasmine-jsreporter/jasmine-jsreporter.js"></script>
 
   <!-- helper functions -->
   <script type="text/javascript" src="spec/helper.js"></script>
@@ -23,13 +24,44 @@
   <script type="text/javascript" src="spec/md5.spec.js"></script>
   <script type="text/javascript" src="spec/pbkdf1.spec.js"></script>
   <script type="text/javascript" src="spec/pbkdf2.spec.js"></script>
+
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+
+      jasmineEnv.updateInterval = 1000;
+      // jasmineEnv.addReporter(new jasmine.TrivialReporter());
+      jasmineEnv.addReporter(new jasmine.JSReporter2());
+      jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+      };
+
+      // Launch test on "window.body.onload"
+      if (window.attachEvent) {
+        window.attachEvent("onload", function() {     //< IE
+          setTimeout(function() {
+            jasmine.getEnv().execute();
+          }, 50);
+        });
+      } else {
+        window.addEventListener("load", function() {  //< everything else
+          setTimeout(function() {
+            jasmine.getEnv().execute();
+          }, 50);
+        }, false);
+      }
+    })();
+  </script>
+
 </head>
 <body>
 
-<script type="text/javascript">
-  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-  jasmine.getEnv().execute();
-</script>
+  <!--
+  <script type="text/javascript">
+    jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+    jasmine.getEnv().execute();
+  </script>
+  -->
 
 </body>
 </html>
