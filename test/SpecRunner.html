@@ -28,40 +28,11 @@
   <script type="text/javascript">
     (function() {
       var jasmineEnv = jasmine.getEnv();
-
-      jasmineEnv.updateInterval = 1000;
-      // jasmineEnv.addReporter(new jasmine.TrivialReporter());
       jasmineEnv.addReporter(new jasmine.JSReporter2());
-      jasmineEnv.specFilter = function(spec) {
-        return htmlReporter.specFilter(spec);
-      };
-
-      // Launch test on "window.body.onload"
-      if (window.attachEvent) {
-        window.attachEvent("onload", function() {     //< IE
-          setTimeout(function() {
-            jasmine.getEnv().execute();
-          }, 50);
-        });
-      } else {
-        window.addEventListener("load", function() {  //< everything else
-          setTimeout(function() {
-            jasmine.getEnv().execute();
-          }, 50);
-        }, false);
-      }
     })();
   </script>
 
 </head>
 <body>
-
-  <!--
-  <script type="text/javascript">
-    jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-    jasmine.getEnv().execute();
-  </script>
-  -->
-
 </body>
 </html>
