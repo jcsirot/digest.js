@@ -1,6 +1,6 @@
 {
   "name": "digest-js",
-  "version": "0.2.0",
+  "version": "0.1.9",
   "description": "A simple javascript library implementing cryptographic digests, HMAC and PBKDF algorithms.",
   "homepage": "http://www.coding-stories.com/digest-js/",
   "author": {
@@ -28,6 +28,7 @@
     "grunt-contrib-jasmine": "^0.8.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "~0.5.0",
+    "grunt-release": "^0.7.0",
     "jshint-stylish": "^1.0.0"
   },
   "keywords": [

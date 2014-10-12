@@ -36,6 +36,11 @@ module.exports = function(grunt) {
         src: 'src/digest.js',
         dest: 'build/digest.min.js'
       }
+    },
+    release: {
+      options: {
+        npm: false
+      }
     }
   });
 
@@ -44,6 +49,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-release');
 
   // Test task(s).
   grunt.registerTask('test', ['jshint', 'jasmine']);
