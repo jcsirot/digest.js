@@ -1,23 +1,23 @@
-/* ***** BEGIN LICENSE BLOCK *****
- *
- * Copyright 2011-2012 Jean-Christophe Sirot <sirot@chelonix.com>
- *
- * This file is part of digest.js
- *
- * digest.js is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * digest.js is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * digest.js. If not, see http://www.gnu.org/licenses/.
- *
- * ***** END LICENSE BLOCK *****  */
+/*! ***** BEGIN LICENSE BLOCK *****
+ *!
+ *! Copyright 2011-2012, 2014 Jean-Christophe Sirot <sirot@chelonix.com>
+ *!
+ *! This file is part of digest.js
+ *!
+ *! digest.js is free software: you can redistribute it and/or modify it under
+ *! the terms of the GNU General Public License as published by the Free Software
+ *! Foundation, either version 3 of the License, or (at your option) any later
+ *! version.
+ *!
+ *! digest.js is distributed in the hope that it will be useful, but
+ *! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *! or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ *! more details.
+ *!
+ *! You should have received a copy of the GNU General Public License along with
+ *! digest.js. If not, see http://www.gnu.org/licenses/.
+ *!
+ *! ***** END LICENSE BLOCK *****  */
 
 /*global ArrayBuffer: true, Uint8Array: true, Uint32Array:true, DataView: true */
 /*jslint browser: true, bitwise: true, plusplus: true, vars: true, indent: 4, maxerr: 50 */
