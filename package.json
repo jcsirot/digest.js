@@ -2,6 +2,7 @@
   "name": "digest-js",
   "version": "0.1.9",
   "description": "A simple javascript library implementing cryptographic digests, HMAC and PBKDF algorithms.",
+  "main": "build/digest.min.js",
   "homepage": "http://www.coding-stories.com/digest-js/",
   "author": {
     "name": "Jean-Christophe Sirot"

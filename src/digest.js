@@ -43,7 +43,7 @@
 }());
 
 
-var Digest = (function () {
+;(function (global) {
     "use strict";
     var utils = {
         add: function (x, y) {
@@ -1187,7 +1187,7 @@ var Digest = (function () {
         };
     };
 
-    return {
+    var Digest = {
         SHA1: function () {
             return dg(sha1Engine);
         },
@@ -1228,4 +1228,14 @@ var Digest = (function () {
             return pbkdf2(hmac(dg(sha256Engine)), iterationCount);
         }
     };
-}());
+
+    if ("undefined" !== typeof exports) { /* Node Support */
+        if (("undefined" !== typeof module) && module.exports) {
+          module.exports = exports = Digest;
+        } else {
+            exports = Digest;
+        }
+    } else { /* Browsers and Web Workers*/
+        global.Digest = Digest;
+    }
+}(this));
