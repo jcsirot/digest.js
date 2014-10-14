@@ -2,12 +2,28 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    clean : ['build'],
+    clean : ['build', 'reports'],
     jasmine : {
-      src : 'src/digest.js',
-      options : {
-        specs : 'test/spec/*.js',
-        helpers: 'spec/helper.js'
+      coverage: {
+        src : 'src/digest.js',
+        options : {
+          specs : 'test/spec/*.js',
+          helpers: 'spec/helper.js',
+          template: require('grunt-template-jasmine-istanbul'),
+          templateOptions: {
+            coverage: 'reports/coverage/coverage.json',
+            report: [
+              {type:'lcov',options: {dir: 'reports/coverage/lcov/'}},
+              {type:'text-summary'}
+            ]
+          }
+        }
+      }
+    },
+    coveralls: {
+      options: {
+        src: 'reports/coverage/lcov/lcov.info',
+        force: false
       }
     },
     jshint: {
@@ -48,11 +64,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-coveralls');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-release');
 
   // Test task(s).
-  grunt.registerTask('test', ['jshint', 'jasmine']);
+  grunt.registerTask('test', ['jshint', 'jasmine', 'coveralls']);
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'jasmine', 'uglify']);
 
