@@ -21,9 +21,11 @@ module.exports = function(grunt) {
       }
     },
     coveralls: {
-      options: {
+      all:{
         src: 'reports/coverage/lcov/lcov.info',
-        force: false
+        options: {
+          force: false
+        }
       }
     },
     jshint: {
@@ -69,7 +71,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release');
 
   // Test task(s).
-  grunt.registerTask('test', ['jshint', 'jasmine', 'coveralls']);
+  grunt.registerTask('test', ['clean', 'jshint', 'jasmine']);
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'jasmine', 'uglify']);
 
