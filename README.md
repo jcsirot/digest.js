@@ -2,6 +2,7 @@ digest.js
 =========
 
 [![Build Status](https://travis-ci.org/jcsirot/digest.js.svg?branch=dev-0.2)](https://travis-ci.org/jcsirot/digest.js)
+[![Coverage Status](https://coveralls.io/repos/jcsirot/digest.js/badge.png?branch=dev-0.2)](https://coveralls.io/r/jcsirot/digest.js?branch=dev-0.2)
 
 Overview
 --------
