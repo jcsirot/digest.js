@@ -20,7 +20,7 @@ describe("SHA-256", function() {
         expect(bin2hex(result)).toEqual("248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
     });
 
-    it("sha1(1000000 x 'a') = cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0", function() {
+    it("sha256(1000000 x 'a') = cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0", function() {
         var buffer = new ArrayBuffer(1000000);
         var array = new Uint8Array(buffer);
         for (var i = 0; i < 1000000; i++) {
