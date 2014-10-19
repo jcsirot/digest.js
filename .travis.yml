@@ -4,4 +4,4 @@ node_js:
 before_install: npm install -g grunt-cli
 install: npm install
 script: grunt clean test
-after_success: grunt coveralls saucelabs
+after_success: grunt coveralls
