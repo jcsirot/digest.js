@@ -11,8 +11,9 @@ Overview
 **digest.js** is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with these web browsers:
 
 + Chrome 11
-+ Firefox 4 (WARNING: since Firefox does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
++ Firefox 4 (WARNING: Firefox 4 does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
 + Safari 5.1
++ IE 10
 
 ### Supported algorithms:
 
@@ -30,6 +31,48 @@ Overview
   + PBKDF2/HMAC/SHA1
   + PBKDF2/HMAC/SHA-256
 
+Installation
+------------
+
+### Node
+
+```shell
+npm install digest-js
+```
+and then
+
+```javascript
+Digest = require('digest-js');
+```
+
+### Browser
+
+```html
+<script type="text/javascript" src="path/to/digest.min.js"></script>
+```
+
+Compilation
+-----------
+
+**digest.js** is using [npm](https://www.npmjs.org/) and [grunt](http://gruntjs.com/)
+
+1. Install Grunt
+
+    ```shell
+    npm install -g grunt-cli
+    ```
+
+2. Download dependencies
+
+    ```shell
+    npm install
+    ```
+
+3. Build the library
+
+    ```shell
+    grunt
+    ```
 
 API Usage
 ---------
