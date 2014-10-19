@@ -113,7 +113,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release');
 
   // Test task(s).
-  grunt.registerTask('test', ['clean', 'jshint', 'jasmine']);
+  grunt.registerTask('test', ['jshint', 'jasmine']);
   // Saucelabs taks.
   grunt.registerTask('saucelabs', ['default', 'connect', 'saucelabs-jasmine']);
   // Default task(s).
