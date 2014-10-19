@@ -3,4 +3,5 @@ node_js:
   - "0.10"
 before_install: npm install -g grunt-cli
 install: npm install
-after_success: grunt coveralls
+script: grunt clean test
+after_success: grunt coveralls saucelabs

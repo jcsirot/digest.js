@@ -1,5 +1,19 @@
 module.exports = function(grunt) {
 
+  browsers = [{
+    browserName: 'firefox',
+    version: '19',
+    platform: 'XP'
+  }, {
+    browserName: 'chrome',
+    version: '30',
+    platform: 'XP'
+  }, {
+    browserName: 'internet explorer',
+    version: '10',
+    platform: 'Windows 7'
+  }];
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean : ['build', 'reports'],
@@ -55,6 +69,32 @@ module.exports = function(grunt) {
         dest: 'build/digest.min.js'
       }
     },
+    connect: {
+      server: {
+        options: {
+          base: '',
+          port: 9999
+        }
+      }
+    },
+    'saucelabs-jasmine': {
+      all: {
+        options: {
+          urls: [
+            'http://127.0.0.1:9999/test/SpecRunner.core.html',
+            'http://127.0.0.1:9999/test/SpecRunner.digest.html',
+            'http://127.0.0.1:9999/test/SpecRunner.pbkdf.html',
+          ],
+          tunnelArgs: ['--verbose'],
+          browsers: browsers,
+          testname: 'digest.js Tests',
+          throttled: 3,
+          sauceConfig: {
+            'video-upload-on-pass': false
+          }
+        }
+      }
+    },
     release: {
       options: {
         npm: false
@@ -68,10 +108,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-coveralls');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-release');
 
   // Test task(s).
   grunt.registerTask('test', ['clean', 'jshint', 'jasmine']);
+  // Saucelabs taks.
+  grunt.registerTask('saucelabs', ['default', 'connect', 'saucelabs-jasmine']);
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'jasmine', 'uglify']);
 
