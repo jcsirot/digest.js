@@ -53,8 +53,7 @@ module.exports = function(grunt) {
         globals: {
           ArrayBuffer: true,
           Uint8Array: true,
-          Uint32Array:true,
-          DataView: true
+          Uint32Array:true
         }
       }
     },

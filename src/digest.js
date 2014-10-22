@@ -19,7 +19,7 @@
  *!
  *! ***** END LICENSE BLOCK *****  */
 
-/*global ArrayBuffer: true, Uint8Array: true, Uint32Array:true, DataView: true */
+/*global ArrayBuffer: true, Uint8Array: true, Uint32Array:true */
 /*jslint browser: true, bitwise: true, plusplus: true, vars: true, indent: 4, maxerr: 50 */
 
 
@@ -45,130 +45,164 @@
 
 ;(function (global) {
     "use strict";
-    var utils = {
-        add: function (x, y) {
-            return (x + y) & 0xFFFFFFFF;
-        },
-
-        add3: function (a, b, c) {
-            return (a + b + c) & 0xFFFFFFFF;
-        },
-
-        add4: function (a, b, c, d) {
-            return (a + b + c + d) & 0xFFFFFFFF;
-        },
-
-        add5: function (a, b, c, d, e) {
-            return (a + b + c + d + e) & 0xFFFFFFFF;
-        },
-
-        leftrot: function (x, n) {
-            return ((x << n) | (x >>> (32 - n))) & 0xFFFFFFFF;
-        },
-
-        rightrot: function (x, n) {
-            return ((x >>> n) | (x << (32 - n))) & 0xFFFFFFFF;
-        }
-    };
 
     /* MD5 */
 
     function md5Engine() {}
 
     md5Engine.prototype.processBlock = function (input) {
-        var LR = utils.leftrot;
-        var ADD = utils.add;
-        var ADD4 = utils.add4;
 
-        var data = new DataView(input.buffer, 0, input.length);
         var A = this.current[0];
         var B = this.current[1];
         var C = this.current[2];
         var D = this.current[3];
+        var T0;
 
-        var W0 = data.getUint32(0, true);
-        A = ADD(B, LR(ADD4(A, W0, 0xD76AA478, (B & C) | (~B & D)), 7));
-        var W1 = data.getUint32(4, true);
-        D = ADD(A, LR(ADD4(D, W1, 0xE8C7B756, (A & B) | (~A & C)), 12));
-        var W2 = data.getUint32(8, true);
-        C = ADD(D, LR(ADD4(C, W2, 0x242070DB, (D & A) | (~D & B)), 17));
-        var W3 = data.getUint32(12, true);
-        B = ADD(C, LR(ADD4(B, W3, 0xC1BDCEEE, (C & D) | (~C & A)), 22));
-        var W4 = data.getUint32(16, true);
-        A = ADD(B, LR(ADD4(A, W4, 0xF57C0FAF, (B & C) | (~B & D)), 7));
-        var W5 = data.getUint32(20, true);
-        D = ADD(A, LR(ADD4(D, W5, 0x4787C62A, (A & B) | (~A & C)), 12));
-        var W6 = data.getUint32(24, true);
-        C = ADD(D, LR(ADD4(C, W6, 0xA8304613, (D & A) | (~D & B)), 17));
-        var W7 = data.getUint32(28, true);
-        B = ADD(C, LR(ADD4(B, W7, 0xFD469501, (C & D) | (~C & A)), 22));
-        var W8 = data.getUint32(32, true);
-        A = ADD(B, LR(ADD4(A, W8, 0x698098D8, (B & C) | (~B & D)), 7));
-        var W9 = data.getUint32(36, true);
-        D = ADD(A, LR(ADD4(D, W9, 0x8B44F7AF, (A & B) | (~A & C)), 12));
-        var Wa = data.getUint32(40, true);
-        C = ADD(D, LR(ADD4(C, Wa, 0xFFFF5BB1, (D & A) | (~D & B)), 17));
-        var Wb = data.getUint32(44, true);
-        B = ADD(C, LR(ADD4(B, Wb, 0x895CD7BE, (C & D) | (~C & A)), 22));
-        var Wc = data.getUint32(48, true);
-        A = ADD(B, LR(ADD4(A, Wc, 0x6B901122, (B & C) | (~B & D)), 7));
-        var Wd = data.getUint32(52, true);
-        D = ADD(A, LR(ADD4(D, Wd, 0xFD987193, (A & B) | (~A & C)), 12));
-        var We = data.getUint32(56, true);
-        C = ADD(D, LR(ADD4(C, We, 0xA679438E, (D & A) | (~D & B)), 17));
-        var Wf = data.getUint32(60, true);
-        B = ADD(C, LR(ADD4(B, Wf, 0x49B40821, (C & D) | (~C & A)), 22));
+        var W0 = input[3] << 24 | input[2] << 16 | input[1] << 8 | input[0];
+        var W1 = input[7] << 24 | input[6] << 16 | input[5] << 8 | input[4];
+        var W2 = input[11] << 24 | input[10] << 16 | input[9] << 8 | input[8];
+        var W3 = input[15] << 24 | input[14] << 16 | input[13] << 8 | input[12];
+        var W4 = input[19] << 24 | input[18] << 16 | input[17] << 8 | input[16];
+        var W5 = input[23] << 24 | input[22] << 16 | input[21] << 8 | input[20];
+        var W6 = input[27] << 24 | input[26] << 16 | input[25] << 8 | input[24];
+        var W7 = input[31] << 24 | input[30] << 16 | input[29] << 8 | input[28];
+        var W8 = input[35] << 24 | input[34] << 16 | input[33] << 8 | input[32];
+        var W9 = input[39] << 24 | input[38] << 16 | input[37] << 8 | input[36];
+        var Wa = input[43] << 24 | input[42] << 16 | input[41] << 8 | input[40];
+        var Wb = input[47] << 24 | input[46] << 16 | input[45] << 8 | input[44];
+        var Wc = input[51] << 24 | input[50] << 16 | input[49] << 8 | input[48];
+        var Wd = input[55] << 24 | input[54] << 16 | input[53] << 8 | input[52];
+        var We = input[59] << 24 | input[58] << 16 | input[57] << 8 | input[56];
+        var Wf = input[63] << 24 | input[62] << 16 | input[61] << 8 | input[60];
 
-        A = ADD(B, LR(ADD4(A, W1, 0xF61E2562, (D & B) | (~D & C)), 5));
-        D = ADD(A, LR(ADD4(D, W6, 0xC040B340, (C & A) | (~C & B)), 9));
-        C = ADD(D, LR(ADD4(C, Wb, 0x265E5A51, (B & D) | (~B & A)), 14));
-        B = ADD(C, LR(ADD4(B, W0, 0xE9B6C7AA, (A & C) | (~A & D)), 20));
-        A = ADD(B, LR(ADD4(A, W5, 0xD62F105D, (D & B) | (~D & C)), 5));
-        D = ADD(A, LR(ADD4(D, Wa,  0x2441453, (C & A) | (~C & B)), 9));
-        C = ADD(D, LR(ADD4(C, Wf, 0xD8A1E681, (B & D) | (~B & A)), 14));
-        B = ADD(C, LR(ADD4(B, W4, 0xE7D3FBC8, (A & C) | (~A & D)), 20));
-        A = ADD(B, LR(ADD4(A, W9, 0x21E1CDE6, (D & B) | (~D & C)), 5));
-        D = ADD(A, LR(ADD4(D, We, 0xC33707D6, (C & A) | (~C & B)), 9));
-        C = ADD(D, LR(ADD4(C, W3, 0xF4D50D87, (B & D) | (~B & A)), 14));
-        B = ADD(C, LR(ADD4(B, W8, 0x455A14ED, (A & C) | (~A & D)), 20));
-        A = ADD(B, LR(ADD4(A, Wd, 0xA9E3E905, (D & B) | (~D & C)), 5));
-        D = ADD(A, LR(ADD4(D, W2, 0xFCEFA3F8, (C & A) | (~C & B)), 9));
-        C = ADD(D, LR(ADD4(C, W7, 0x676F02D9, (B & D) | (~B & A)), 14));
-        B = ADD(C, LR(ADD4(B, Wc, 0x8D2A4C8A, (A & C) | (~A & D)), 20));
-
-        A = ADD(B, LR(ADD4(A, W5, 0xFFFA3942, B ^ C ^ D), 4));
-        D = ADD(A, LR(ADD4(D, W8, 0x8771F681, A ^ B ^ C), 11));
-        C = ADD(D, LR(ADD4(C, Wb, 0x6D9D6122, D ^ A ^ B), 16));
-        B = ADD(C, LR(ADD4(B, We, 0xFDE5380C, C ^ D ^ A), 23));
-        A = ADD(B, LR(ADD4(A, W1, 0xA4BEEA44, B ^ C ^ D), 4));
-        D = ADD(A, LR(ADD4(D, W4, 0x4BDECFA9, A ^ B ^ C), 11));
-        C = ADD(D, LR(ADD4(C, W7, 0xF6BB4B60, D ^ A ^ B), 16));
-        B = ADD(C, LR(ADD4(B, Wa, 0xBEBFBC70, C ^ D ^ A), 23));
-        A = ADD(B, LR(ADD4(A, Wd, 0x289B7EC6, B ^ C ^ D), 4));
-        D = ADD(A, LR(ADD4(D, W0, 0xEAA127FA, A ^ B ^ C), 11));
-        C = ADD(D, LR(ADD4(C, W3, 0xD4EF3085, D ^ A ^ B), 16));
-        B = ADD(C, LR(ADD4(B, W6,  0x4881D05, C ^ D ^ A), 23));
-        A = ADD(B, LR(ADD4(A, W9, 0xD9D4D039, B ^ C ^ D), 4));
-        D = ADD(A, LR(ADD4(D, Wc, 0xE6DB99E5, A ^ B ^ C), 11));
-        C = ADD(D, LR(ADD4(C, Wf, 0x1FA27CF8, D ^ A ^ B), 16));
-        B = ADD(C, LR(ADD4(B, W2, 0xC4AC5665, C ^ D ^ A), 23));
-
-        A = ADD(B, LR(ADD4(A, W0, 0xf4292244, C ^ (B | ~D)), 6));
-        D = ADD(A, LR(ADD4(D, W7, 0x432aff97, B ^ (A | ~C)), 10));
-        C = ADD(D, LR(ADD4(C, We, 0xab9423a7, A ^ (D | ~B)), 15));
-        B = ADD(C, LR(ADD4(B, W5, 0xfc93a039, D ^ (C | ~A)), 21));
-        A = ADD(B, LR(ADD4(A, Wc, 0x655b59c3, C ^ (B | ~D)), 6));
-        D = ADD(A, LR(ADD4(D, W3, 0x8f0ccc92, B ^ (A | ~C)), 10));
-        C = ADD(D, LR(ADD4(C, Wa, 0xffeff47d, A ^ (D | ~B)), 15));
-        B = ADD(C, LR(ADD4(B, W1, 0x85845dd1, D ^ (C | ~A)), 21));
-        A = ADD(B, LR(ADD4(A, W8, 0x6fa87e4f, C ^ (B | ~D)), 6));
-        D = ADD(A, LR(ADD4(D, Wf, 0xfe2ce6e0, B ^ (A | ~C)), 10));
-        C = ADD(D, LR(ADD4(C, W6, 0xa3014314, A ^ (D | ~B)), 15));
-        B = ADD(C, LR(ADD4(B, Wd, 0x4e0811a1, D ^ (C | ~A)), 21));
-        A = ADD(B, LR(ADD4(A, W4, 0xf7537e82, C ^ (B | ~D)), 6));
-        D = ADD(A, LR(ADD4(D, Wb, 0xbd3af235, B ^ (A | ~C)), 10));
-        C = ADD(D, LR(ADD4(C, W2, 0x2ad7d2bb, A ^ (D | ~B)), 15));
-        B = ADD(C, LR(ADD4(B, W9, 0xeb86d391, D ^ (C | ~A)), 21));
+        T0 = A + W0 + 0xd76aa478 + ((B & C) | (~B & D)) | 0;
+        A = B + (((T0) << 7) | ((T0) >>> 25)) | 0;
+        T0 = D + W1 + 0xe8c7b756 + ((A & B) | (~A & C)) | 0;
+        D = A + (((T0) << 12) | ((T0) >>> 20)) | 0;
+        T0 = C + W2 + 0x242070db + ((D & A) | (~D & B)) | 0;
+        C = D + (((T0) << 17) | ((T0) >>> 15)) | 0;
+        T0 = B + W3 + 0xc1bdceee + ((C & D) | (~C & A)) | 0;
+        B = C + (((T0) << 22) | ((T0) >>> 10)) | 0;
+        T0 = A + W4 + 0xf57c0faf + ((B & C) | (~B & D)) | 0;
+        A = B + (((T0) << 7) | ((T0) >>> 25)) | 0;
+        T0 = D + W5 + 0x4787c62a + ((A & B) | (~A & C)) | 0;
+        D = A + (((T0) << 12) | ((T0) >>> 20)) | 0;
+        T0 = C + W6 + 0xa8304613 + ((D & A) | (~D & B)) | 0;
+        C = D + (((T0) << 17) | ((T0) >>> 15)) | 0;
+        T0 = B + W7 + 0xfd469501 + ((C & D) | (~C & A)) | 0;
+        B = C + (((T0) << 22) | ((T0) >>> 10)) | 0;
+        T0 = A + W8 + 0x698098d8 + ((B & C) | (~B & D)) | 0;
+        A = B + (((T0) << 7) | ((T0) >>> 25)) | 0;
+        T0 = D + W9 + 0x8b44f7af + ((A & B) | (~A & C)) | 0;
+        D = A + (((T0) << 12) | ((T0) >>> 20)) | 0;
+        T0 = C + Wa + 0xffff5bb1 + ((D & A) | (~D & B)) | 0;
+        C = D + (((T0) << 17) | ((T0) >>> 15)) | 0;
+        T0 = B + Wb + 0x895cd7be + ((C & D) | (~C & A)) | 0;
+        B = C + (((T0) << 22) | ((T0) >>> 10)) | 0;
+        T0 = A + Wc + 0x6b901122 + ((B & C) | (~B & D)) | 0;
+        A = B + (((T0) << 7) | ((T0) >>> 25)) | 0;
+        T0 = D + Wd + 0xfd987193 + ((A & B) | (~A & C)) | 0;
+        D = A + (((T0) << 12) | ((T0) >>> 20)) | 0;
+        T0 = C + We + 0xa679438e + ((D & A) | (~D & B)) | 0;
+        C = D + (((T0) << 17) | ((T0) >>> 15)) | 0;
+        T0 = B + Wf + 0x49b40821 + ((C & D) | (~C & A)) | 0;
+        B = C + (((T0) << 22) | ((T0) >>> 10)) | 0;
+        T0 = A + W1 + 0xf61e2562 + ((D & B) | (~D & C)) | 0;
+        A = B + (((T0) << 5) | ((T0) >>> 27)) | 0;
+        T0 = D + W6 + 0xc040b340 + ((C & A) | (~C & B)) | 0;
+        D = A + (((T0) << 9) | ((T0) >>> 23)) | 0;
+        T0 = C + Wb + 0x265e5a51 + ((B & D) | (~B & A)) | 0;
+        C = D + (((T0) << 14) | ((T0) >>> 18)) | 0;
+        T0 = B + W0 + 0xe9b6c7aa + ((A & C) | (~A & D)) | 0;
+        B = C + (((T0) << 20) | ((T0) >>> 12)) | 0;
+        T0 = A + W5 + 0xd62f105d + ((D & B) | (~D & C)) | 0;
+        A = B + (((T0) << 5) | ((T0) >>> 27)) | 0;
+        T0 = D + Wa + 0x2441453 + ((C & A) | (~C & B)) | 0;
+        D = A + (((T0) << 9) | ((T0) >>> 23)) | 0;
+        T0 = C + Wf + 0xd8a1e681 + ((B & D) | (~B & A)) | 0;
+        C = D + (((T0) << 14) | ((T0) >>> 18)) | 0;
+        T0 = B + W4 + 0xe7d3fbc8 + ((A & C) | (~A & D)) | 0;
+        B = C + (((T0) << 20) | ((T0) >>> 12)) | 0;
+        T0 = A + W9 + 0x21e1cde6 + ((D & B) | (~D & C)) | 0;
+        A = B + (((T0) << 5) | ((T0) >>> 27)) | 0;
+        T0 = D + We + 0xc33707d6 + ((C & A) | (~C & B)) | 0;
+        D = A + (((T0) << 9) | ((T0) >>> 23)) | 0;
+        T0 = C + W3 + 0xf4d50d87 + ((B & D) | (~B & A)) | 0;
+        C = D + (((T0) << 14) | ((T0) >>> 18)) | 0;
+        T0 = B + W8 + 0x455a14ed + ((A & C) | (~A & D)) | 0;
+        B = C + (((T0) << 20) | ((T0) >>> 12)) | 0;
+        T0 = A + Wd + 0xa9e3e905 + ((D & B) | (~D & C)) | 0;
+        A = B + (((T0) << 5) | ((T0) >>> 27)) | 0;
+        T0 = D + W2 + 0xfcefa3f8 + ((C & A) | (~C & B)) | 0;
+        D = A + (((T0) << 9) | ((T0) >>> 23)) | 0;
+        T0 = C + W7 + 0x676f02d9 + ((B & D) | (~B & A)) | 0;
+        C = D + (((T0) << 14) | ((T0) >>> 18)) | 0;
+        T0 = B + Wc + 0x8d2a4c8a + ((A & C) | (~A & D)) | 0;
+        B = C + (((T0) << 20) | ((T0) >>> 12)) | 0;
+        T0 = A + W5 + 0xfffa3942 + (B ^ C ^ D) | 0;
+        A = B + (((T0) << 4) | ((T0) >>> 28)) | 0;
+        T0 = D + W8 + 0x8771f681 + (A ^ B ^ C) | 0;
+        D = A + (((T0) << 11) | ((T0) >>> 21)) | 0;
+        T0 = C + Wb + 0x6d9d6122 + (D ^ A ^ B) | 0;
+        C = D + (((T0) << 16) | ((T0) >>> 16)) | 0;
+        T0 = B + We + 0xfde5380c + (C ^ D ^ A) | 0;
+        B = C + (((T0) << 23) | ((T0) >>> 9)) | 0;
+        T0 = A + W1 + 0xa4beea44 + (B ^ C ^ D) | 0;
+        A = B + (((T0) << 4) | ((T0) >>> 28)) | 0;
+        T0 = D + W4 + 0x4bdecfa9 + (A ^ B ^ C) | 0;
+        D = A + (((T0) << 11) | ((T0) >>> 21)) | 0;
+        T0 = C + W7 + 0xf6bb4b60 + (D ^ A ^ B) | 0;
+        C = D + (((T0) << 16) | ((T0) >>> 16)) | 0;
+        T0 = B + Wa + 0xbebfbc70 + (C ^ D ^ A) | 0;
+        B = C + (((T0) << 23) | ((T0) >>> 9)) | 0;
+        T0 = A + Wd + 0x289b7ec6 + (B ^ C ^ D) | 0;
+        A = B + (((T0) << 4) | ((T0) >>> 28)) | 0;
+        T0 = D + W0 + 0xeaa127fa + (A ^ B ^ C) | 0;
+        D = A + (((T0) << 11) | ((T0) >>> 21)) | 0;
+        T0 = C + W3 + 0xd4ef3085 + (D ^ A ^ B) | 0;
+        C = D + (((T0) << 16) | ((T0) >>> 16)) | 0;
+        T0 = B + W6 + 0x4881d05 + (C ^ D ^ A) | 0;
+        B = C + (((T0) << 23) | ((T0) >>> 9)) | 0;
+        T0 = A + W9 + 0xd9d4d039 + (B ^ C ^ D) | 0;
+        A = B + (((T0) << 4) | ((T0) >>> 28)) | 0;
+        T0 = D + Wc + 0xe6db99e5 + (A ^ B ^ C) | 0;
+        D = A + (((T0) << 11) | ((T0) >>> 21)) | 0;
+        T0 = C + Wf + 0x1fa27cf8 + (D ^ A ^ B) | 0;
+        C = D + (((T0) << 16) | ((T0) >>> 16)) | 0;
+        T0 = B + W2 + 0xc4ac5665 + (C ^ D ^ A) | 0;
+        B = C + (((T0) << 23) | ((T0) >>> 9)) | 0;
+        T0 = A + W0 + 0xf4292244 + (C ^ (B | ~D)) | 0;
+        A = B + (((T0) << 6) | ((T0) >>> 26)) | 0;
+        T0 = D + W7 + 0x432aff97 + (B ^ (A | ~C)) | 0;
+        D = A + (((T0) << 10) | ((T0) >>> 22)) | 0;
+        T0 = C + We + 0xab9423a7 + (A ^ (D | ~B)) | 0;
+        C = D + (((T0) << 15) | ((T0) >>> 17)) | 0;
+        T0 = B + W5 + 0xfc93a039 + (D ^ (C | ~A)) | 0;
+        B = C + (((T0) << 21) | ((T0) >>> 11)) | 0;
+        T0 = A + Wc + 0x655b59c3 + (C ^ (B | ~D)) | 0;
+        A = B + (((T0) << 6) | ((T0) >>> 26)) | 0;
+        T0 = D + W3 + 0x8f0ccc92 + (B ^ (A | ~C)) | 0;
+        D = A + (((T0) << 10) | ((T0) >>> 22)) | 0;
+        T0 = C + Wa + 0xffeff47d + (A ^ (D | ~B)) | 0;
+        C = D + (((T0) << 15) | ((T0) >>> 17)) | 0;
+        T0 = B + W1 + 0x85845dd1 + (D ^ (C | ~A)) | 0;
+        B = C + (((T0) << 21) | ((T0) >>> 11)) | 0;
+        T0 = A + W8 + 0x6fa87e4f + (C ^ (B | ~D)) | 0;
+        A = B + (((T0) << 6) | ((T0) >>> 26)) | 0;
+        T0 = D + Wf + 0xfe2ce6e0 + (B ^ (A | ~C)) | 0;
+        D = A + (((T0) << 10) | ((T0) >>> 22)) | 0;
+        T0 = C + W6 + 0xa3014314 + (A ^ (D | ~B)) | 0;
+        C = D + (((T0) << 15) | ((T0) >>> 17)) | 0;
+        T0 = B + Wd + 0x4e0811a1 + (D ^ (C | ~A)) | 0;
+        B = C + (((T0) << 21) | ((T0) >>> 11)) | 0;
+        T0 = A + W4 + 0xf7537e82 + (C ^ (B | ~D)) | 0;
+        A = B + (((T0) << 6) | ((T0) >>> 26)) | 0;
+        T0 = D + Wb + 0xbd3af235 + (B ^ (A | ~C)) | 0;
+        D = A + (((T0) << 10) | ((T0) >>> 22)) | 0;
+        T0 = C + W2 + 0x2ad7d2bb + (A ^ (D | ~B)) | 0;
+        C = D + (((T0) << 15) | ((T0) >>> 17)) | 0;
+        T0 = B + W9 + 0xeb86d391 + (D ^ (C | ~A)) | 0;
+        B = C + (((T0) << 21) | ((T0) >>> 11)) | 0;
 
         this.current[0] += A;
         this.current[1] += B;
@@ -234,259 +268,55 @@
     function sha1Engine() {}
 
     sha1Engine.prototype.processBlock = function (input) {
-        var LR = utils.leftrot;
-        var ADD = utils.add5;
 
-        var data = new DataView(input.buffer, 0, input.length);
         var A = this.current[0];
         var B = this.current[1];
         var C = this.current[2];
         var D = this.current[3];
         var E = this.current[4];
 
-        var W0 = data.getUint32(0);
-        E = ADD(LR(A, 5), W0, 0x5A827999, ((B & C) | (~B & D)), E);
-        B = LR(B, 30);
-        var W1 = data.getUint32(4);
-        D = ADD(LR(E, 5), W1, 0x5A827999, ((A & B) | (~A & C)), D);
-        A = LR(A, 30);
-        var W2 = data.getUint32(8);
-        C = ADD(LR(D, 5), W2, 0x5A827999, ((E & A) | (~E & B)), C);
-        E = LR(E, 30);
-        var W3 = data.getUint32(12);
-        B = ADD(LR(C, 5), W3, 0x5A827999, ((D & E) | (~D & A)), B);
-        D = LR(D, 30);
-        var W4 = data.getUint32(16);
-        A = ADD(LR(B, 5), W4, 0x5A827999, ((C & D) | (~C & E)), A);
-        C = LR(C, 30);
-        var W5 = data.getUint32(20);
-        E = ADD(LR(A, 5), W5, 0x5A827999, ((B & C) | (~B & D)), E);
-        B = LR(B, 30);
-        var W6 = data.getUint32(24);
-        D = ADD(LR(E, 5), W6, 0x5A827999, ((A & B) | (~A & C)), D);
-        A = LR(A, 30);
-        var W7 = data.getUint32(28);
-        C = ADD(LR(D, 5), W7, 0x5A827999, ((E & A) | (~E & B)), C);
-        E = LR(E, 30);
-        var W8 = data.getUint32(32);
-        B = ADD(LR(C, 5), W8, 0x5A827999, ((D & E) | (~D & A)), B);
-        D = LR(D, 30);
-        var W9 = data.getUint32(36);
-        A = ADD(LR(B, 5), W9, 0x5A827999, ((C & D) | (~C & E)), A);
-        C = LR(C, 30);
-        var Wa = data.getUint32(40);
-        E = ADD(LR(A, 5), Wa, 0x5A827999, ((B & C) | (~B & D)), E);
-        B = LR(B, 30);
-        var Wb = data.getUint32(44);
-        D = ADD(LR(E, 5), Wb, 0x5A827999, ((A & B) | (~A & C)), D);
-        A = LR(A, 30);
-        var Wc = data.getUint32(48);
-        C = ADD(LR(D, 5), Wc, 0x5A827999, ((E & A) | (~E & B)), C);
-        E = LR(E, 30);
-        var Wd = data.getUint32(52);
-        B = ADD(LR(C, 5), Wd, 0x5A827999, ((D & E) | (~D & A)), B);
-        D = LR(D, 30);
-        var We = data.getUint32(56);
-        A = ADD(LR(B, 5), We, 0x5A827999, ((C & D) | (~C & E)), A);
-        C = LR(C, 30);
-        var Wf = data.getUint32(60);
-        E = ADD(LR(A, 5), Wf, 0x5A827999, ((B & C) | (~B & D)), E);
-        B = LR(B, 30);
-        W0 = LR(Wd ^ W8 ^ W2 ^ W0, 1);
-        D = ADD(LR(E, 5), W0, 0x5A827999, ((A & B) | (~A & C)), D);
-        A = LR(A, 30);
-        W1 = LR(We ^ W9 ^ W3 ^ W1, 1);
-        C = ADD(LR(D, 5), W1, 0x5A827999, ((E & A) | (~E & B)), C);
-        E = LR(E, 30);
-        W2 = LR(Wf ^ Wa ^ W4 ^ W2, 1);
-        B = ADD(LR(C, 5), W2, 0x5A827999, ((D & E) | (~D & A)), B);
-        D = LR(D, 30);
-        W3 = LR(W0 ^ Wb ^ W5 ^ W3, 1);
-        A = ADD(LR(B, 5), W3, 0x5A827999, ((C & D) | (~C & E)), A);
-        C = LR(C, 30);
+        var W = [ 
+            input[0] << 24 | input[1] << 16 | input[2] << 8 | input[3],
+            input[4] << 24 | input[5] << 16 | input[6] << 8 | input[7],
+            input[8] << 24 | input[9] << 16 | input[10] << 8 | input[11],
+            input[12] << 24 | input[13] << 16 | input[14] << 8 | input[15],
+            input[16] << 24 | input[17] << 16 | input[18] << 8 | input[19],
+            input[20] << 24 | input[21] << 16 | input[22] << 8 | input[23],
+            input[24] << 24 | input[25] << 16 | input[26] << 8 | input[27],
+            input[28] << 24 | input[29] << 16 | input[30] << 8 | input[31],
+            input[32] << 24 | input[33] << 16 | input[34] << 8 | input[35],
+            input[36] << 24 | input[37] << 16 | input[38] << 8 | input[39],
+            input[40] << 24 | input[41] << 16 | input[42] << 8 | input[43],
+            input[44] << 24 | input[45] << 16 | input[46] << 8 | input[47],
+            input[48] << 24 | input[49] << 16 | input[50] << 8 | input[51],
+            input[52] << 24 | input[53] << 16 | input[54] << 8 | input[55],
+            input[56] << 24 | input[57] << 16 | input[58] << 8 | input[59],
+            input[60] << 24 | input[61] << 16 | input[62] << 8 | input[63]
+        ];
+        var T;
+        var i;
 
-        W4 = LR(W1 ^ Wc ^ W6 ^ W4, 1);
-        E = ADD(LR(A, 5), W4, 0x6ED9EBA1, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        W5 = LR(W2 ^ Wd ^ W7 ^ W5, 1);
-        D = ADD(LR(E, 5), W5, 0x6ED9EBA1, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        W6 = LR(W3 ^ We ^ W8 ^ W6, 1);
-        C = ADD(LR(D, 5), W6, 0x6ED9EBA1, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        W7 = LR(W4 ^ Wf ^ W9 ^ W7, 1);
-        B = ADD(LR(C, 5), W7, 0x6ED9EBA1, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        W8 = LR(W5 ^ W0 ^ Wa ^ W8, 1);
-        A = ADD(LR(B, 5), W8, 0x6ED9EBA1, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        W9 = LR(W6 ^ W1 ^ Wb ^ W9, 1);
-        E = ADD(LR(A, 5), W9, 0x6ED9EBA1, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        Wa = LR(W7 ^ W2 ^ Wc ^ Wa, 1);
-        D = ADD(LR(E, 5), Wa, 0x6ED9EBA1, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        Wb = LR(W8 ^ W3 ^ Wd ^ Wb, 1);
-        C = ADD(LR(D, 5), Wb, 0x6ED9EBA1, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        Wc = LR(W9 ^ W4 ^ We ^ Wc, 1);
-        B = ADD(LR(C, 5), Wc, 0x6ED9EBA1, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        Wd = LR(Wa ^ W5 ^ Wf ^ Wd, 1);
-        A = ADD(LR(B, 5), Wd, 0x6ED9EBA1, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        We = LR(Wb ^ W6 ^ W0 ^ We, 1);
-        E = ADD(LR(A, 5), We, 0x6ED9EBA1, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        Wf = LR(Wc ^ W7 ^ W1 ^ Wf, 1);
-        D = ADD(LR(E, 5), Wf, 0x6ED9EBA1, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        W0 = LR(Wd ^ W8 ^ W2 ^ W0, 1);
-        C = ADD(LR(D, 5), W0, 0x6ED9EBA1, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        W1 = LR(We ^ W9 ^ W3 ^ W1, 1);
-        B = ADD(LR(C, 5), W1, 0x6ED9EBA1, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        W2 = LR(Wf ^ Wa ^ W4 ^ W2, 1);
-        A = ADD(LR(B, 5), W2, 0x6ED9EBA1, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        W3 = LR(W0 ^ Wb ^ W5 ^ W3, 1);
-        E = ADD(LR(A, 5), W3, 0x6ED9EBA1, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        W4 = LR(W1 ^ Wc ^ W6 ^ W4, 1);
-        D = ADD(LR(E, 5), W4, 0x6ED9EBA1, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        W5 = LR(W2 ^ Wd ^ W7 ^ W5, 1);
-        C = ADD(LR(D, 5), W5, 0x6ED9EBA1, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        W6 = LR(W3 ^ We ^ W8 ^ W6, 1);
-        B = ADD(LR(C, 5), W6, 0x6ED9EBA1, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        W7 = LR(W4 ^ Wf ^ W9 ^ W7, 1);
-        A = ADD(LR(B, 5), W7, 0x6ED9EBA1, (C ^ D ^ E), A);
-        C = LR(C, 30);
+        for (i = 16; i < 80; i++) {
+            W.push((((W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16]) << 1) | ((W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16]) >>> 31)));
+        }
 
-        W8 = LR(W5 ^ W0 ^ Wa ^ W8, 1);
-        E = ADD(LR(A, 5), W8, 0x8F1BBCDC, ((B & C) | (B & D) | (C & D)), E);
-        B = LR(B, 30);
-        W9 = LR(W6 ^ W1 ^ Wb ^ W9, 1);
-        D = ADD(LR(E, 5), W9, 0x8F1BBCDC, ((A & B) | (A & C) | (B & C)), D);
-        A = LR(A, 30);
-        Wa = LR(W7 ^ W2 ^ Wc ^ Wa, 1);
-        C = ADD(LR(D, 5), Wa, 0x8F1BBCDC, ((E & A) | (E & B) | (A & B)), C);
-        E = LR(E, 30);
-        Wb = LR(W8 ^ W3 ^ Wd ^ Wb, 1);
-        B = ADD(LR(C, 5), Wb, 0x8F1BBCDC, ((D & E) | (D & A) | (E & A)), B);
-        D = LR(D, 30);
-        Wc = LR(W9 ^ W4 ^ We ^ Wc, 1);
-        A = ADD(LR(B, 5), Wc, 0x8F1BBCDC, ((C & D) | (C & E) | (D & E)), A);
-        C = LR(C, 30);
-        Wd = LR(Wa ^ W5 ^ Wf ^ Wd, 1);
-        E = ADD(LR(A, 5), Wd, 0x8F1BBCDC, ((B & C) | (B & D) | (C & D)), E);
-        B = LR(B, 30);
-        We = LR(Wb ^ W6 ^ W0 ^ We, 1);
-        D = ADD(LR(E, 5), We, 0x8F1BBCDC, ((A & B) | (A & C) | (B & C)), D);
-        A = LR(A, 30);
-        Wf = LR(Wc ^ W7 ^ W1 ^ Wf, 1);
-        C = ADD(LR(D, 5), Wf, 0x8F1BBCDC, ((E & A) | (E & B) | (A & B)), C);
-        E = LR(E, 30);
-        W0 = LR(Wd ^ W8 ^ W2 ^ W0, 1);
-        B = ADD(LR(C, 5), W0, 0x8F1BBCDC, ((D & E) | (D & A) | (E & A)), B);
-        D = LR(D, 30);
-        W1 = LR(We ^ W9 ^ W3 ^ W1, 1);
-        A = ADD(LR(B, 5), W1, 0x8F1BBCDC, ((C & D) | (C & E) | (D & E)), A);
-        C = LR(C, 30);
-        W2 = LR(Wf ^ Wa ^ W4 ^ W2, 1);
-        E = ADD(LR(A, 5), W2, 0x8F1BBCDC, ((B & C) | (B & D) | (C & D)), E);
-        B = LR(B, 30);
-        W3 = LR(W0 ^ Wb ^ W5 ^ W3, 1);
-        D = ADD(LR(E, 5), W3, 0x8F1BBCDC, ((A & B) | (A & C) | (B & C)), D);
-        A = LR(A, 30);
-        W4 = LR(W1 ^ Wc ^ W6 ^ W4, 1);
-        C = ADD(LR(D, 5), W4, 0x8F1BBCDC, ((E & A) | (E & B) | (A & B)), C);
-        E = LR(E, 30);
-        W5 = LR(W2 ^ Wd ^ W7 ^ W5, 1);
-        B = ADD(LR(C, 5), W5, 0x8F1BBCDC, ((D & E) | (D & A) | (E & A)), B);
-        D = LR(D, 30);
-        W6 = LR(W3 ^ We ^ W8 ^ W6, 1);
-        A = ADD(LR(B, 5), W6, 0x8F1BBCDC, ((C & D) | (C & E) | (D & E)), A);
-        C = LR(C, 30);
-        W7 = LR(W4 ^ Wf ^ W9 ^ W7, 1);
-        E = ADD(LR(A, 5), W7, 0x8F1BBCDC, ((B & C) | (B & D) | (C & D)), E);
-        B = LR(B, 30);
-        W8 = LR(W5 ^ W0 ^ Wa ^ W8, 1);
-        D = ADD(LR(E, 5), W8, 0x8F1BBCDC, ((A & B) | (A & C) | (B & C)), D);
-        A = LR(A, 30);
-        W9 = LR(W6 ^ W1 ^ Wb ^ W9, 1);
-        C = ADD(LR(D, 5), W9, 0x8F1BBCDC, ((E & A) | (E & B) | (A & B)), C);
-        E = LR(E, 30);
-        Wa = LR(W7 ^ W2 ^ Wc ^ Wa, 1);
-        B = ADD(LR(C, 5), Wa, 0x8F1BBCDC, ((D & E) | (D & A) | (E & A)), B);
-        D = LR(D, 30);
-        Wb = LR(W8 ^ W3 ^ Wd ^ Wb, 1);
-        A = ADD(LR(B, 5), Wb, 0x8F1BBCDC, ((C & D) | (C & E) | (D & E)), A);
-        C = LR(C, 30);
-
-        Wc = LR(W9 ^ W4 ^ We ^ Wc, 1);
-        E = ADD(LR(A, 5), Wc, 0xCA62C1D6, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        Wd = LR(Wa ^ W5 ^ Wf ^ Wd, 1);
-        D = ADD(LR(E, 5), Wd, 0xCA62C1D6, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        We = LR(Wb ^ W6 ^ W0 ^ We, 1);
-        C = ADD(LR(D, 5), We, 0xCA62C1D6, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        Wf = LR(Wc ^ W7 ^ W1 ^ Wf, 1);
-        B = ADD(LR(C, 5), Wf, 0xCA62C1D6, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        W0 = LR(Wd ^ W8 ^ W2 ^ W0, 1);
-        A = ADD(LR(B, 5), W0, 0xCA62C1D6, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        W1 = LR(We ^ W9 ^ W3 ^ W1, 1);
-        E = ADD(LR(A, 5), W1, 0xCA62C1D6, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        W2 = LR(Wf ^ Wa ^ W4 ^ W2, 1);
-        D = ADD(LR(E, 5), W2, 0xCA62C1D6, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        W3 = LR(W0 ^ Wb ^ W5 ^ W3, 1);
-        C = ADD(LR(D, 5), W3, 0xCA62C1D6, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        W4 = LR(W1 ^ Wc ^ W6 ^ W4, 1);
-        B = ADD(LR(C, 5), W4, 0xCA62C1D6, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        W5 = LR(W2 ^ Wd ^ W7 ^ W5, 1);
-        A = ADD(LR(B, 5), W5, 0xCA62C1D6, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        W6 = LR(W3 ^ We ^ W8 ^ W6, 1);
-        E = ADD(LR(A, 5), W6, 0xCA62C1D6, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        W7 = LR(W4 ^ Wf ^ W9 ^ W7, 1);
-        D = ADD(LR(E, 5), W7, 0xCA62C1D6, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        W8 = LR(W5 ^ W0 ^ Wa ^ W8, 1);
-        C = ADD(LR(D, 5), W8, 0xCA62C1D6, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        W9 = LR(W6 ^ W1 ^ Wb ^ W9, 1);
-        B = ADD(LR(C, 5), W9, 0xCA62C1D6, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        Wa = LR(W7 ^ W2 ^ Wc ^ Wa, 1);
-        A = ADD(LR(B, 5), Wa, 0xCA62C1D6, (C ^ D ^ E), A);
-        C = LR(C, 30);
-        Wb = LR(W8 ^ W3 ^ Wd ^ Wb, 1);
-        E = ADD(LR(A, 5), Wb, 0xCA62C1D6, (B ^ C ^ D), E);
-        B = LR(B, 30);
-        Wc = LR(W9 ^ W4 ^ We ^ Wc, 1);
-        D = ADD(LR(E, 5), Wc, 0xCA62C1D6, (A ^ B ^ C), D);
-        A = LR(A, 30);
-        Wd = LR(Wa ^ W5 ^ Wf ^ Wd, 1);
-        C = ADD(LR(D, 5), Wd, 0xCA62C1D6, (E ^ A ^ B), C);
-        E = LR(E, 30);
-        We = LR(Wb ^ W6 ^ W0 ^ We, 1);
-        B = ADD(LR(C, 5), We, 0xCA62C1D6, (D ^ E ^ A), B);
-        D = LR(D, 30);
-        Wf = LR(Wc ^ W7 ^ W1 ^ Wf, 1);
-        A = ADD(LR(B, 5), Wf, 0xCA62C1D6, (C ^ D ^ E), A);
-        C = LR(C, 30);
+        for (i = 0; i < 80; i++) {
+            T = ((A << 5) | (A >>> 27)) + E + W[i];
+            if (i < 20) {
+                T += ((B & C) | (~B & D)) + 0x5A827999 | 0;
+            } else if (i < 40) {
+                T += (B ^ C ^ D) + 0x6ED9EBA1 | 0;
+            } else if (i < 60) {
+                T += ((B & C) | (B & D) | (C & D)) + 0x8F1BBCDC| 0;
+            } else {
+                T += (B ^ C ^ D) + 0xCA62C1D6 | 0;
+            }
+            E = D;
+            D = C;
+            C = ((B << 30) | (B >>> 2));
+            B = A;
+            A = T;
+        }
 
         this.current[0] += A;
         this.current[1] += B;
@@ -558,13 +388,7 @@
     function sha256Engine() {}
 
     sha256Engine.prototype.processBlock = function (input) {
-        var RR = utils.rightrot;
-        var ADD = utils.add;
-        var ADD3 = utils.add3;
-        var ADD4 = utils.add4;
-        var ADD5 = utils.add5;
 
-        var data = new DataView(input.buffer, 0, input.length);
         var A = this.current[0];
         var B = this.current[1];
         var C = this.current[2];
@@ -573,266 +397,55 @@
         var F = this.current[5];
         var G = this.current[6];
         var H = this.current[7];
-        var T1;
+        var T1, T2;
         var W0, W1, W2, W3, W4, W5, W6, W7;
         var W8, W9, Wa, Wb, Wc, Wd, We, Wf;
 
-        W0 = data.getUint32(0);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0x428A2F98, W0);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W1 = data.getUint32(4);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0x71374491, W1);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        W2 = data.getUint32(8);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0xB5C0FBCF, W2);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        W3 = data.getUint32(12);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0xE9B5DBA5, W3);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        W4 = data.getUint32(16);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x3956C25B, W4);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        W5 = data.getUint32(20);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0x59F111F1, W5);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        W6 = data.getUint32(24);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x923F82A4, W6);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        W7 = data.getUint32(28);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0xAB1C5ED5, W7);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W8 = data.getUint32(32);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0xD807AA98, W8);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W9 = data.getUint32(36);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0x12835B01, W9);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        Wa = data.getUint32(40);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0x243185BE, Wa);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        Wb = data.getUint32(44);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0x550C7DC3, Wb);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        Wc = data.getUint32(48);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x72BE5D74, Wc);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        Wd = data.getUint32(52);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0x80DEB1FE, Wd);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        We = data.getUint32(56);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x9BDC06A7, We);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        Wf = data.getUint32(60);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0xC19BF174, Wf);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W0 = ADD4(RR(We, 17) ^ RR(We, 19) ^ (We >>> 10), W9, RR(W1, 7) ^ RR(W1, 18) ^ (W1 >>> 3), W0);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0xE49B69C1, W0);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W1 = ADD4(RR(Wf, 17) ^ RR(Wf, 19) ^ (Wf >>> 10), Wa, RR(W2, 7) ^ RR(W2, 18) ^ (W2 >>> 3), W1);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0xEFBE4786, W1);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        W2 = ADD4(RR(W0, 17) ^ RR(W0, 19) ^ (W0 >>> 10), Wb, RR(W3, 7) ^ RR(W3, 18) ^ (W3 >>> 3), W2);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0x0FC19DC6, W2);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        W3 = ADD4(RR(W1, 17) ^ RR(W1, 19) ^ (W1 >>> 10), Wc, RR(W4, 7) ^ RR(W4, 18) ^ (W4 >>> 3), W3);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0x240CA1CC, W3);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        W4 = ADD4(RR(W2, 17) ^ RR(W2, 19) ^ (W2 >>> 10), Wd, RR(W5, 7) ^ RR(W5, 18) ^ (W5 >>> 3), W4);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x2DE92C6F, W4);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        W5 = ADD4(RR(W3, 17) ^ RR(W3, 19) ^ (W3 >>> 10), We, RR(W6, 7) ^ RR(W6, 18) ^ (W6 >>> 3), W5);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0x4A7484AA, W5);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        W6 = ADD4(RR(W4, 17) ^ RR(W4, 19) ^ (W4 >>> 10), Wf, RR(W7, 7) ^ RR(W7, 18) ^ (W7 >>> 3), W6);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x5CB0A9DC, W6);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        W7 = ADD4(RR(W5, 17) ^ RR(W5, 19) ^ (W5 >>> 10), W0, RR(W8, 7) ^ RR(W8, 18) ^ (W8 >>> 3), W7);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0x76F988DA, W7);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W8 = ADD4(RR(W6, 17) ^ RR(W6, 19) ^ (W6 >>> 10), W1, RR(W9, 7) ^ RR(W9, 18) ^ (W9 >>> 3), W8);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0x983E5152, W8);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W9 = ADD4(RR(W7, 17) ^ RR(W7, 19) ^ (W7 >>> 10), W2, RR(Wa, 7) ^ RR(Wa, 18) ^ (Wa >>> 3), W9);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0xA831C66D, W9);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        Wa = ADD4(RR(W8, 17) ^ RR(W8, 19) ^ (W8 >>> 10), W3, RR(Wb, 7) ^ RR(Wb, 18) ^ (Wb >>> 3), Wa);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0xB00327C8, Wa);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        Wb = ADD4(RR(W9, 17) ^ RR(W9, 19) ^ (W9 >>> 10), W4, RR(Wc, 7) ^ RR(Wc, 18) ^ (Wc >>> 3), Wb);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0xBF597FC7, Wb);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        Wc = ADD4(RR(Wa, 17) ^ RR(Wa, 19) ^ (Wa >>> 10), W5, RR(Wd, 7) ^ RR(Wd, 18) ^ (Wd >>> 3), Wc);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0xC6E00BF3, Wc);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        Wd = ADD4(RR(Wb, 17) ^ RR(Wb, 19) ^ (Wb >>> 10), W6, RR(We, 7) ^ RR(We, 18) ^ (We >>> 3), Wd);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0xD5A79147, Wd);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        We = ADD4(RR(Wc, 17) ^ RR(Wc, 19) ^ (Wc >>> 10), W7, RR(Wf, 7) ^ RR(Wf, 18) ^ (Wf >>> 3), We);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x06CA6351, We);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        Wf = ADD4(RR(Wd, 17) ^ RR(Wd, 19) ^ (Wd >>> 10), W8, RR(W0, 7) ^ RR(W0, 18) ^ (W0 >>> 3), Wf);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0x14292967, Wf);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W0 = ADD4(RR(We, 17) ^ RR(We, 19) ^ (We >>> 10), W9, RR(W1, 7) ^ RR(W1, 18) ^ (W1 >>> 3), W0);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0x27B70A85, W0);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W1 = ADD4(RR(Wf, 17) ^ RR(Wf, 19) ^ (Wf >>> 10), Wa, RR(W2, 7) ^ RR(W2, 18) ^ (W2 >>> 3), W1);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0x2E1B2138, W1);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        W2 = ADD4(RR(W0, 17) ^ RR(W0, 19) ^ (W0 >>> 10), Wb, RR(W3, 7) ^ RR(W3, 18) ^ (W3 >>> 3), W2);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0x4D2C6DFC, W2);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        W3 = ADD4(RR(W1, 17) ^ RR(W1, 19) ^ (W1 >>> 10), Wc, RR(W4, 7) ^ RR(W4, 18) ^ (W4 >>> 3), W3);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0x53380D13, W3);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        W4 = ADD4(RR(W2, 17) ^ RR(W2, 19) ^ (W2 >>> 10), Wd, RR(W5, 7) ^ RR(W5, 18) ^ (W5 >>> 3), W4);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x650A7354, W4);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        W5 = ADD4(RR(W3, 17) ^ RR(W3, 19) ^ (W3 >>> 10), We, RR(W6, 7) ^ RR(W6, 18) ^ (W6 >>> 3), W5);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0x766A0ABB, W5);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        W6 = ADD4(RR(W4, 17) ^ RR(W4, 19) ^ (W4 >>> 10), Wf, RR(W7, 7) ^ RR(W7, 18) ^ (W7 >>> 3), W6);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x81C2C92E, W6);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        W7 = ADD4(RR(W5, 17) ^ RR(W5, 19) ^ (W5 >>> 10), W0, RR(W8, 7) ^ RR(W8, 18) ^ (W8 >>> 3), W7);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0x92722C85, W7);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W8 = ADD4(RR(W6, 17) ^ RR(W6, 19) ^ (W6 >>> 10), W1, RR(W9, 7) ^ RR(W9, 18) ^ (W9 >>> 3), W8);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0xA2BFE8A1, W8);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W9 = ADD4(RR(W7, 17) ^ RR(W7, 19) ^ (W7 >>> 10), W2, RR(Wa, 7) ^ RR(Wa, 18) ^ (Wa >>> 3), W9);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0xA81A664B, W9);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        Wa = ADD4(RR(W8, 17) ^ RR(W8, 19) ^ (W8 >>> 10), W3, RR(Wb, 7) ^ RR(Wb, 18) ^ (Wb >>> 3), Wa);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0xC24B8B70, Wa);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        Wb = ADD4(RR(W9, 17) ^ RR(W9, 19) ^ (W9 >>> 10), W4, RR(Wc, 7) ^ RR(Wc, 18) ^ (Wc >>> 3), Wb);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0xC76C51A3, Wb);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        Wc = ADD4(RR(Wa, 17) ^ RR(Wa, 19) ^ (Wa >>> 10), W5, RR(Wd, 7) ^ RR(Wd, 18) ^ (Wd >>> 3), Wc);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0xD192E819, Wc);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        Wd = ADD4(RR(Wb, 17) ^ RR(Wb, 19) ^ (Wb >>> 10), W6, RR(We, 7) ^ RR(We, 18) ^ (We >>> 3), Wd);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0xD6990624, Wd);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        We = ADD4(RR(Wc, 17) ^ RR(Wc, 19) ^ (Wc >>> 10), W7, RR(Wf, 7) ^ RR(Wf, 18) ^ (Wf >>> 3), We);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0xF40E3585, We);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        Wf = ADD4(RR(Wd, 17) ^ RR(Wd, 19) ^ (Wd >>> 10), W8, RR(W0, 7) ^ RR(W0, 18) ^ (W0 >>> 3), Wf);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0x106AA070, Wf);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W0 = ADD4(RR(We, 17) ^ RR(We, 19) ^ (We >>> 10), W9, RR(W1, 7) ^ RR(W1, 18) ^ (W1 >>> 3), W0);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0x19A4C116, W0);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W1 = ADD4(RR(Wf, 17) ^ RR(Wf, 19) ^ (Wf >>> 10), Wa, RR(W2, 7) ^ RR(W2, 18) ^ (W2 >>> 3), W1);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0x1E376C08, W1);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        W2 = ADD4(RR(W0, 17) ^ RR(W0, 19) ^ (W0 >>> 10), Wb, RR(W3, 7) ^ RR(W3, 18) ^ (W3 >>> 3), W2);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0x2748774C, W2);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        W3 = ADD4(RR(W1, 17) ^ RR(W1, 19) ^ (W1 >>> 10), Wc, RR(W4, 7) ^ RR(W4, 18) ^ (W4 >>> 3), W3);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0x34B0BCB5, W3);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        W4 = ADD4(RR(W2, 17) ^ RR(W2, 19) ^ (W2 >>> 10), Wd, RR(W5, 7) ^ RR(W5, 18) ^ (W5 >>> 3), W4);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x391C0CB3, W4);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        W5 = ADD4(RR(W3, 17) ^ RR(W3, 19) ^ (W3 >>> 10), We, RR(W6, 7) ^ RR(W6, 18) ^ (W6 >>> 3), W5);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0x4ED8AA4A, W5);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        W6 = ADD4(RR(W4, 17) ^ RR(W4, 19) ^ (W4 >>> 10), Wf, RR(W7, 7) ^ RR(W7, 18) ^ (W7 >>> 3), W6);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0x5B9CCA4F, W6);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        W7 = ADD4(RR(W5, 17) ^ RR(W5, 19) ^ (W5 >>> 10), W0, RR(W8, 7) ^ RR(W8, 18) ^ (W8 >>> 3), W7);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0x682E6FF3, W7);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
-        W8 = ADD4(RR(W6, 17) ^ RR(W6, 19) ^ (W6 >>> 10), W1, RR(W9, 7) ^ RR(W9, 18) ^ (W9 >>> 3), W8);
-        T1 = ADD5(H, RR(E, 6) ^ RR(E, 11) ^ RR(E, 25), (E & F) ^ (~E & G), 0x748F82EE, W8);
-        H = ADD3(T1, RR(A, 2) ^ RR(A, 13) ^ RR(A, 22), (A & B) ^ (B & C) ^ (A & C));
-        D = ADD(D, T1);
-        W9 = ADD4(RR(W7, 17) ^ RR(W7, 19) ^ (W7 >>> 10), W2, RR(Wa, 7) ^ RR(Wa, 18) ^ (Wa >>> 3), W9);
-        T1 = ADD5(G, RR(D, 6) ^ RR(D, 11) ^ RR(D, 25), (D & E) ^ (~D & F), 0x78A5636F, W9);
-        G = ADD3(T1, RR(H, 2) ^ RR(H, 13) ^ RR(H, 22), (H & A) ^ (A & B) ^ (H & B));
-        C = ADD(C, T1);
-        Wa = ADD4(RR(W8, 17) ^ RR(W8, 19) ^ (W8 >>> 10), W3, RR(Wb, 7) ^ RR(Wb, 18) ^ (Wb >>> 3), Wa);
-        T1 = ADD5(F, RR(C, 6) ^ RR(C, 11) ^ RR(C, 25), (C & D) ^ (~C & E), 0x84C87814, Wa);
-        F = ADD3(T1, RR(G, 2) ^ RR(G, 13) ^ RR(G, 22), (G & H) ^ (H & A) ^ (G & A));
-        B = ADD(B, T1);
-        Wb = ADD4(RR(W9, 17) ^ RR(W9, 19) ^ (W9 >>> 10), W4, RR(Wc, 7) ^ RR(Wc, 18) ^ (Wc >>> 3), Wb);
-        T1 = ADD5(E, RR(B, 6) ^ RR(B, 11) ^ RR(B, 25), (B & C) ^ (~B & D), 0x8CC70208, Wb);
-        E = ADD3(T1, RR(F, 2) ^ RR(F, 13) ^ RR(F, 22), (F & G) ^ (G & H) ^ (F & H));
-        A = ADD(A, T1);
-        Wc = ADD4(RR(Wa, 17) ^ RR(Wa, 19) ^ (Wa >>> 10), W5, RR(Wd, 7) ^ RR(Wd, 18) ^ (Wd >>> 3), Wc);
-        T1 = ADD5(D, RR(A, 6) ^ RR(A, 11) ^ RR(A, 25), (A & B) ^ (~A & C), 0x90BEFFFA, Wc);
-        D = ADD3(T1, RR(E, 2) ^ RR(E, 13) ^ RR(E, 22), (E & F) ^ (F & G) ^ (E & G));
-        H = ADD(H, T1);
-        Wd = ADD4(RR(Wb, 17) ^ RR(Wb, 19) ^ (Wb >>> 10), W6, RR(We, 7) ^ RR(We, 18) ^ (We >>> 3), Wd);
-        T1 = ADD5(C, RR(H, 6) ^ RR(H, 11) ^ RR(H, 25), (H & A) ^ (~H & B), 0xA4506CEB, Wd);
-        C = ADD3(T1, RR(D, 2) ^ RR(D, 13) ^ RR(D, 22), (D & E) ^ (E & F) ^ (D & F));
-        G = ADD(G, T1);
-        We = ADD4(RR(Wc, 17) ^ RR(Wc, 19) ^ (Wc >>> 10), W7, RR(Wf, 7) ^ RR(Wf, 18) ^ (Wf >>> 3), We);
-        T1 = ADD5(B, RR(G, 6) ^ RR(G, 11) ^ RR(G, 25), (G & H) ^ (~G & A), 0xBEF9A3F7, We);
-        B = ADD3(T1, RR(C, 2) ^ RR(C, 13) ^ RR(C, 22), (C & D) ^ (D & E) ^ (C & E));
-        F = ADD(F, T1);
-        Wf = ADD4(RR(Wd, 17) ^ RR(Wd, 19) ^ (Wd >>> 10), W8, RR(W0, 7) ^ RR(W0, 18) ^ (W0 >>> 3), Wf);
-        T1 = ADD5(A, RR(F, 6) ^ RR(F, 11) ^ RR(F, 25), (F & G) ^ (~F & H), 0xC67178F2, Wf);
-        A = ADD3(T1, RR(B, 2) ^ RR(B, 13) ^ RR(B, 22), (B & C) ^ (C & D) ^ (B & D));
-        E = ADD(E, T1);
+        W0 = input[0] << 24 | input[1] << 16 | input[2] << 8 | input[3];
+        W1 = input[4] << 24 | input[5] << 16 | input[6] << 8 | input[7];
+        W2 = input[8] << 24 | input[9] << 16 | input[10] << 8 | input[11];
+        W3 = input[12] << 24 | input[13] << 16 | input[14] << 8 | input[15];
+        W4 = input[16] << 24 | input[17] << 16 | input[18] << 8 | input[19];
+        W5 = input[20] << 24 | input[21] << 16 | input[22] << 8 | input[23];
+        W6 = input[24] << 24 | input[25] << 16 | input[26] << 8 | input[27];
+        W7 = input[28] << 24 | input[29] << 16 | input[30] << 8 | input[31];
+        W8 = input[32] << 24 | input[33] << 16 | input[34] << 8 | input[35];
+        W9 = input[36] << 24 | input[37] << 16 | input[38] << 8 | input[39];
+        Wa = input[40] << 24 | input[41] << 16 | input[42] << 8 | input[43];
+        Wb = input[44] << 24 | input[45] << 16 | input[46] << 8 | input[47];
+        Wc = input[48] << 24 | input[49] << 16 | input[50] << 8 | input[51];
+        Wd = input[52] << 24 | input[53] << 16 | input[54] << 8 | input[55];
+        We = input[56] << 24 | input[57] << 16 | input[58] << 8 | input[59];
+        Wf = input[60] << 24 | input[61] << 16 | input[62] << 8 | input[63];
+
+        var W = [W0, W1, W2, W3, W4, W5, W6, W7, W8, W9, Wa, Wb, Wc, Wd, We, Wf];
+        for (var i = 16; i < 64; i++) {
+            W.push((((W[i-2] >>> 17) | (W[i-2] << 15)) ^ ((W[i-2] >>> 19) | (W[i-2] << 13)) ^ (W[i-2] >>> 10)) + W[i-7] + (((W[i-15] >>> 7) | (W[i-15] << 25)) ^ ((W[i-15] >>> 18) | (W[i-15] << 14)) ^ (W[i-15] >>> 3)) + W[i-16] | 0);
+        }
+
+        var K = [
+            0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+            0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+            0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+            0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+            0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+            0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+            0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+            0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+        ];
+
+        for (var r = 0; r < 64; r++) {
+            T1 = H + (((E >>> 6) | (E << 26)) ^ ((E >>> 11) | (E << 21)) ^ ((E >>> 25) | (E << 7))) + ((E & F) ^ (~E & G)) + K[r] + W[r] | 0;
+            T2 = (((A >>> 2) | (A << 30)) ^ ((A >>> 13) | (A << 19)) ^ ((A >>> 22) | (A << 10))) + ((A & B) ^ (B & C) ^ (A & C)) | 0;
+            H = G;
+            G = F;
+            F = E;
+            E = D + T1 | 0;
+            D = C;
+            C = B;
+            B = A;
+            A = T1 + T2 | 0;
+        }
 
         this.current[0] += A;
         this.current[1] += B;
@@ -848,7 +461,7 @@
     sha256Engine.prototype.doPadding = function () {
         var datalen = (this.inLen + this.currentLen) * 8;
         var msw = 0; // FIXME
-        var lsw = datalen & 0xFFFFFFFF;
+        var lsw = datalen | 0;
         var zeros = this.inLen <= 55 ? 55 - this.inLen : 119 - this.inLen;
         var pad = new Uint8Array(new ArrayBuffer(zeros + 1 + 8));
         pad[0] = 0x80;
@@ -980,7 +593,10 @@
                 len -= copyLen;
                 this.inLen += copyLen;
                 if (this.inLen === this.blockLen) {
+		    //var t0 = performance.now();
                     this.processBlock(this.inbuf);
+		    //var t1 = performance.now();
+		    //console.log(t1 - t0);
                     this.inLen = 0;
                 }
             }
@@ -1016,7 +632,7 @@
             },
 
             digest: function (input) {
-                this.update(input);
+                engine.update(convertToUint8Array(input));
                 return engine.finalize();
             },
 
