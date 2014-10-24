@@ -11,7 +11,7 @@ Overview
 **digest.js** is designed for modern web browsers and requires the [W3C Typed Arrays](http://www.khronos.org/registry/typedarray/specs/latest/) support. digest.js has been successfully tested with these web browsers:
 
 + Chrome 11
-+ Firefox 4 (WARNING: Firefox 4 does not support the `Dataview` API, you should use the [David Flanagan's emulation](https://github.com/davidflanagan/DataView.js))
++ Firefox 4
 + Safari 5.1
 + IE 10
 
