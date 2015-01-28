@@ -44,6 +44,6 @@
     "md5",
     "sha256",
     "hmac",
-    "pkkdf"
+    "pbkdf"
   ]
 }
