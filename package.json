@@ -1,6 +1,6 @@
 {
   "name": "digest-js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A simple javascript library implementing cryptographic digests, HMAC and PBKDF algorithms.",
   "main": "build/digest.min.js",
   "homepage": "http://www.coding-stories.com/digest-js/",
@@ -14,12 +14,7 @@
   "bugs": {
     "url": "https://github.com/jcsirot/digest.js/issues"
   },
-  "licenses": [
-    {
-      "type": "GPL-3.0+",
-      "url": "http://www.gnu.org/licenses/gpl-3.0.txt"
-    }
-  ],
+  "license": "GPL-3.0",
   "scripts": {
     "test": "grunt test"
   },
